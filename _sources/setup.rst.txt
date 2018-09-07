@@ -1,0 +1,8 @@
+Setup
+=====
+
+To install:
+
+.. code-block:: bash
+
+    $ python setup install -e ./
