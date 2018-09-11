@@ -33,6 +33,19 @@ class SerialTestClass(object):
 
         return self.serialPort.readline()
 
+    @property
+    def in_waiting(self):
+
+        return self.serialPort.in_waiting
+
+    @property
+    def is_open(self):
+
+        return self.serialPort.is_open
+
+    def close(self):
+        self.serialPort.close()
+
 def test_SerialTestClass():
     """ Test case for the SerialTestClass; make sure we have that configured
     correctly, or the remaining tests will fail
