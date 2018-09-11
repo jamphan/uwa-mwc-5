@@ -13,13 +13,12 @@ from tests.test_serial import SerialTestClass
 from uwaPySense.Server import Listener
 
 def test_listener():
-
-    msg_queue = Queue()
+    """ Check there are no errors
+    """
 
     s = SerialTestClass()
-    l = Listener(s, msg_queue)
+
+    l = Listener(s)
     l.start()
 
-    s.write('test')
-    assert msg_queue.empty()
-    s.write('stop')
+    s.write('msg:test' + '\n')

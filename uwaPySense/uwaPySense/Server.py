@@ -4,42 +4,58 @@ Changes:
     2018/09/07: Jamie Phan, Initial version
 """
 
+import os
+import sys
+import abc
 import serial
 import threading
-from asyncio import Queue
+import time
+import queue
 
-from uwaPySense import db
-from uwaPySense.messages import MQTTMessage
+from uwaPySense.messages import Msg
 
 class StoppableThread(threading.Thread):
     """ A thread which has flags to determine whether or not it should 
-    abruptly be stopped or not.
+    abruptly be stopped or not. All objects that are derived from this class
+    will be stopped when the stop() routine is called by any thread
 
-    Args:
-        linked_parent (StoppableThread)
+    Attributes:
+        isStopped (bool): Returns TRUE if a stop event was raised
     """
 
     def __init__(self):
 
         threading.Thread.__init__(self)
         self._stop_event = threading.Event()
-        self._linked_obj = None
+        self._stop_event.clear()
 
     def stop(self):
+        """ This routine will stop all threads of class StoppableThread
+        as all classes that are listening to the threading event ._stop_event
+        will be set on stop.
+        """
+
         self._stop_event.set()
 
-    def link_to(self, linked_obj):
-        if not(isinstance(linked_obj, StoppableThread)):
-            raise TypeError('Linked object for StoppableThreads must be of the same class')
+        try:
+            self.clean_up()
+        except Exception:
+            raise SystemError("Failed to clean up threads cleanly.")
 
-        self._linked_obj = linked_obj
+    @abc.abstractmethod
+    def clean_up(self):
+        """ This method allows derived classes to specify how to clean up their
+        processes on a stop event.
+        """
 
+        os._exit(0)
+
+    @property
     def isStopped(self):
+        """ Checks to see if the event has been set
+        """
 
-        if (self._linked_obj is not None and self._linked_obj.isStopped):
-            return True
-        else:
-            return self._stop_event.is_set()
+        return self._stop_event.is_set()
 
 class Listener(StoppableThread):
     """ The Listener is only responsible for listening to messages on the serial
@@ -47,41 +63,56 @@ class Listener(StoppableThread):
 
     Args:
         serialPort: An open serial port object with read and write methods
-        queue (asynio.Queue): A message queue to store messages
+
+    Attributes:
+        _serial (serial.serial): The open serial port the object is instantiated
+                                 with
+        _queue (queue.Queue): This is a shared memory space between this object
+                              and the child Worker object. This is the
+                              primary method of communication between the 
+                              threads
+        _worker (Worker): The child thread which must handle all the write 
+                          and processing operations
+
     """
 
-    def __init__(self, serialPort, queue):
+    def __init__(self, serialPort):
         
         super().__init__()
 
         self._serial = serialPort
-        self._queue = queue
-        
-        self._scribe = Scribe(self._queue)
-        #self._scribe.link_to(self)
+        self._queue = queue.Queue()
+
+        self._worker = Worker(self._queue)
 
     def run(self):
+        """ The main loop for the Listener thread. Note this overrides the
+        threading.Thread method, and hence will be called upon .start()
+        of this thread.
+        """
 
-        self._scribe.start()
+        self._worker.start()
 
         while not(self.isStopped):
 
-            #try:
             ser_bytes = self._serial.readline()
-            decoded_bytes =  ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
+            m = Msg(ser_bytes, word_len = len(ser_bytes)-1)
 
-            m = MQTTMessage(decoded_bytes)
-            if m.isAction:
-                if m.msg == 'stop':
-                    self.stop()
+            if m.is_valid():
+                self._queue.put_nowait(m)
 
-            self._queue.put(m)
-            # except:
-            #     print("Keyboard Interrupt")
-            #     break
+    def clean_up(self):
+        self._worker.stop()
+        self._serial.close()
 
-class Scribe(StoppableThread):
-    """ The scribe must empty the queue into the database. 
+class Worker(StoppableThread):
+    """ The worker must write the messages from queue into the database.
+
+    Attributes:
+        _queue (queue.Queue): This is a shared memory space between the parent
+                              Listener instance and this instance. This is the
+                              primary method of communication between the 
+                              threads
     """
 
     def __init__(self, queue):
@@ -90,8 +121,19 @@ class Scribe(StoppableThread):
         self._queue = queue
 
     def run(self):
-        """ The main loop"""
+        """ The main loop for the Worker thread. Note this overrides the
+        threading.Thread method, and hence will be called upon .start()
+        of this thread.
+        """
 
         while not(self.isStopped):
-            msg_to_write = self._queue.get()
-            print(msg_to_write)
+
+            if not(self._queue.empty()):
+                m = self._queue.get_nowait()
+                
+                # TODO: Replace with actual logic
+                # Placeholder
+                print(m.as_json)
+                # End placeholder
+
+                self._queue.task_done()
