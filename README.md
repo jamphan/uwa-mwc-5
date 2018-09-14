@@ -1,6 +1,10 @@
 # uwaPySense
 CITS4419 UWA
 
+# Design documentation
+
+See: [gh-pages](https://kjph.github.io/uwa-mwc-5/)
+
 # Usage
 
 Because this is a package, to run this locally, you will either need to install the pacakge through pip or run from the top-level directory (see [minimal python package structure](https://python-packaging.readthedocs.io/en/latest/minimal.html)).
