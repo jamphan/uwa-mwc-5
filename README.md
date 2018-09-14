@@ -29,3 +29,16 @@ Examples:
   
   python -m tests.demonstration_bufferOverflow    # example run of a demonstration
 ```
+
+## Installing with pip
+
+Nb. **the package is still under construction. So there mabe issues**
+
+``` bash
+
+  cd /Path/to/repo/uwaPySense/
+  
+  python -m pip install -e .        # note the -e switch makes a symlink and not a proper install
+                                    # this means when the package is updated, so too will the 'install'
+
+```
