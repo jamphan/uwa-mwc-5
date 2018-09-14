@@ -5,6 +5,9 @@ Changes:
 """
 import pytest
 
+SERVER = ''
+DATABASE = ''
+
 from uwaPySense import db
 
 def test_getDbSqlserver():
@@ -13,6 +16,5 @@ def test_getDbSqlserver():
     """
 
     import pyodbc
-    assert (isinstance(db.get_db_sqlserver("AUPC0QMV2S\MSSQLSERVER01", 
-                                                    "Huxley - Integrated Planning"),
+    assert (isinstance(db.get_db_sqlserver(SERVER,DATABASE),
                                 pyodbc.Connection))
