@@ -3,7 +3,7 @@ CITS4419 UWA
 
 # Usage
 
-Because this is a package, to run this locally, you will either need to install the pacakge through pip or run from the top-level directory.
+Because this is a package, to run this locally, you will either need to install the pacakge through pip or run from the top-level directory (see [minimal python package structure](https://python-packaging.readthedocs.io/en/latest/minimal.html)).
 
 ## Top-level directory
 
@@ -23,7 +23,9 @@ Examples:
 ``` bash
 
   python -m uwaPySense.main     # the main script for the server
-  python -m pytests /tests/     # to run all unit tests with PyTest (you may need to remove the db test...)
+  
+  python -m pytest /tests/      # to run all unit tests with PyTest 
+                                # Note, you may need to remove the db test or setup your own SQL server instance
   
   python -m tests.demonstration_bufferOverflow    # example run of a demonstration
 ```
