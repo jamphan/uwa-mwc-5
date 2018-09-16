@@ -36,7 +36,7 @@ Examples:
 
 ## Installing with pip
 
-Nb. **the package is still under construction. So there mabe issues**
+Nb. **the package is still under construction. So there may be issues**
 
 ``` bash
 
