@@ -4,11 +4,12 @@ Quickstart
 Setup
 -----
 
-To install:
+To install, you need to navigate to the package directory. The package directory
+is such that when you list-directory with ``ls`` you can see a ``setup.py`` file
 
 .. code-block:: bash
 
-    $ python setup install -e ./
+    $ python -m pip install -e .
 
 Running
 -------
