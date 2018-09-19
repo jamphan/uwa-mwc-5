@@ -1,8 +1,36 @@
+Quickstart
+==========
+
 Setup
-=====
+-----
 
 To install:
 
 .. code-block:: bash
 
     $ python setup install -e ./
+
+Running
+-------
+
+The ``main`` module takes command-line arguments and can be run from any directory
+once it is installed.
+
+To start a ``Listener`` instance, you need to run the main module on the specified port:
+
+.. code-block:: bash
+
+   $ python -m uwaPySense.main -p <PORT>
+
+You can also specify the baud-rate with the ``--baud-rate`` flag
+
+.. code-block:: bash
+
+   $ python -m uwaPySense -p COM3 --baud-rate 9600
+
+For more information see:
+
+.. code-block:: bash
+
+   $ python -m uwaPySense.main --help
+

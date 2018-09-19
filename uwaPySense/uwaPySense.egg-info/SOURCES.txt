@@ -1,0 +1,4 @@
+uwaPySense.egg-info/PKG-INFO
+uwaPySense.egg-info/SOURCES.txt
+uwaPySense.egg-info/dependency_links.txt
+uwaPySense.egg-info/top_level.txt

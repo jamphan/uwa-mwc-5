@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Setup &mdash; MWC Wireless Sensor Network  documentation</title>
+  <title>Quickstart &mdash; MWC Wireless Sensor Network  documentation</title>
   
 
   
@@ -88,7 +88,11 @@
             
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running">Running</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="systems/Listener.html">Listner</a></li>
 </ul>
 
@@ -134,7 +138,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Setup</li>
+      <li>Quickstart</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -153,11 +157,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="setup">
-<h1>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
 <p>To install:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ python setup install -e ./
 </pre></div>
+</div>
+</div>
+<div class="section" id="running">
+<h2>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">main</span></code> module takes command-line arguments and can be run from any directory
+once it is installed.</p>
+<p>To start a <code class="docutils literal"><span class="pre">Listener</span></code> instance, you need to run the main module on the specified port:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python -m uwaPySense.main -p &lt;PORT&gt;
+</pre></div>
+</div>
+<p>You can also specify the baud-rate with the <code class="docutils literal"><span class="pre">--baud-rate</span></code> flag</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python -m uwaPySense -p COM3 --baud-rate <span class="m">9600</span>
+</pre></div>
+</div>
+<p>For more information see:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python -m uwaPySense.main --help
+</pre></div>
+</div>
 </div>
 </div>
 
