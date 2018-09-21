@@ -12,7 +12,7 @@ import threading
 import time
 import queue
 
-from uwaPySense.messages import Msg
+import uwaPySense.messages
 
 class StoppableThread(threading.Thread):
     """ A thread which has flags to determine whether or not it should 
@@ -63,6 +63,7 @@ class Listener(StoppableThread):
 
     Args:
         serialPort: An open serial port object with read and write methods
+        message_prototype: This is the class prototype for the message structure to use
 
     Attributes:
         _serial (serial.serial): The open serial port the object is instantiated
@@ -76,7 +77,7 @@ class Listener(StoppableThread):
 
     """
 
-    def __init__(self, serialPort):
+    def __init__(self, serialPort, message_prototype = uwaPySense.messages.Msg):
         
         super().__init__()
 
@@ -84,6 +85,7 @@ class Listener(StoppableThread):
         self._queue = queue.Queue()
 
         self._worker = Worker(self._queue)
+        self._msg_prototype = message_prototype
 
     def run(self):
         """ The main loop for the Listener thread. Note this overrides the
@@ -96,7 +98,7 @@ class Listener(StoppableThread):
         while not(self.isStopped):
 
             ser_bytes = self._serial.readline()
-            m = Msg(ser_bytes, word_len = len(ser_bytes)-1)
+            m = self._msg_prototype(ser_bytes, word_len = len(ser_bytes)-1)
 
             if m.is_valid():
                 self._queue.put_nowait(m)

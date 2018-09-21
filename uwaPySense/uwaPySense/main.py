@@ -1,8 +1,12 @@
 import time
 import serial
+import argparse
 
 from uwaPySense.Server import Listener
-import argparse
+import uwaPySense.messages
+
+
+VALID_MSG_TYPES = {"Test": uwaPySense.messages.Msg, 'RF': uwaPySense.messages.RfMsg}
 
 def main():
     """ Program entry point."""
@@ -49,6 +53,12 @@ def cli_parser():
                         dest='time_out',
                         help='Specify the serial port time-out')
 
+    parser.add_argument('--message-type',
+                        action='store',
+                        default='Test',
+                        dest='message_type',
+                        help='Specify the message structure')
+
     args = parser.parse_args()
 
     # Data validation
@@ -65,6 +75,10 @@ def cli_parser():
             stop_flag = True
             err_list.append("The baud rate must be an integer")
 
+        if args.message_type not in VALID_MSG_TYPES:
+            stop_flag = True
+            err_list.append("Message type must be one of: {}".format(",".join(VALID_MSG_TYPES)))
+
     if stop_flag:
         err_msg = 'Errors detected with arguments.\n\n'
         err_msg += '\n'.join(err_list)
@@ -77,7 +91,7 @@ def loop_debug(args):
 
     from tests.test_serial import SerialTestClass
     s = SerialTestClass()
-    l = Listener(s)
+    l = Listener(s, message_prototype=VALID_MSG_TYPES[args.message_type])
     l.start()
 
     try:
@@ -92,7 +106,8 @@ def loop(args):
     s = serial.serial_for_url(url=args.serial_port,
                               timeout=float(args.time_out),
                               baudrate=int(args.baud_rate))
-    l = Listener(s)
+
+    l = Listener(s, message_prototype=VALID_MSG_TYPES[args.message_type])
     l.start()
 
     print('Listening...')

@@ -38,3 +38,17 @@ class Msg(object):
         else:
             return False
         # End placeholder
+
+class RfMsg(Msg):
+    """ This class is specific to the RF sensors"""
+
+    def __init__(self, *args, **kwargs):
+
+        super(RfMsg, self).__init__(*args, **kwargs)
+
+    def is_valid(self):
+
+        if len(self._raw) > 0 and self._raw[0].isdigit():
+            return True
+        else:
+            return False
