@@ -11,6 +11,7 @@ import serial
 import threading
 import time
 import queue
+from datetime import datetime
 
 import uwaPySense.messages
 
@@ -122,6 +123,8 @@ class Worker(StoppableThread):
         super().__init__()
         self._queue = queue
 
+        self._output = open('test.csv', 'w')
+
     def run(self):
         """ The main loop for the Worker thread. Note this overrides the
         threading.Thread method, and hence will be called upon .start()
@@ -135,7 +138,12 @@ class Worker(StoppableThread):
                 
                 # TODO: Replace with actual logic
                 # Placeholder
-                print(m.as_json)
+                self._output.write('{},{}\n'.format(datetime.now(), m.as_json))
+
                 # End placeholder
 
                 self._queue.task_done()
+
+    def clean_up(self):
+
+        self._output.close()

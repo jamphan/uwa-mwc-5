@@ -52,3 +52,14 @@ class RfMsg(Msg):
             return True
         else:
             return False
+
+    @property
+    def as_json(self):
+
+        col_RRSI = 10
+
+        msg_parts = [float(x) for x in self._raw.split(',')]
+        try:
+            return str(msg_parts[col_RRSI])
+        except IndexError:
+            return None
