@@ -25,13 +25,23 @@ class StoppableThread(threading.Thread):
 
     Attributes:
         isStopped (bool): Returns TRUE if a stop event was raised
+        _rest (float): This numeric should be used in the main run() loop as
+                       a specified time for the thread to 'rest' every
+                       iteration
     """
 
-    def __init__(self):
+    def __init__(self, rest=0):
 
         threading.Thread.__init__(self)
         self._stop_event = threading.Event()
         self._stop_event.clear()
+
+        self._rest = rest
+
+    def rest(self):
+
+        if self._rest:
+            time.sleep(self._rest)
 
     def stop(self):
         """ This routine will stop all threads of class StoppableThread
@@ -81,9 +91,9 @@ class Listener(StoppableThread):
 
     """
 
-    def __init__(self, serialPort, message_prototype):
+    def __init__(self, serialPort, message_prototype, **kwargs):
         
-        super().__init__()
+        super(Listener, self).__init__(**kwargs)
 
         self._serial = serialPort
         self._queue = queue.Queue()
@@ -118,8 +128,8 @@ class Listener(StoppableThread):
 
             if m.is_valid():
                 self._queue.put_nowait(m)
-            else:
-                time.sleep(0.01)
+            
+            self.rest()
 
     def clean_up(self):
         """ Final clean up when the thread stops
@@ -138,9 +148,9 @@ class Worker(StoppableThread):
                               threads
     """
 
-    def __init__(self, write_to = None):
+    def __init__(self, write_to = None, **kwargs):
         
-        super().__init__()
+        super(Worker, self).__init__(**kwargs)
         self._write_to = write_to
 
     def assign_to(self, q):
@@ -176,5 +186,5 @@ class Worker(StoppableThread):
                 self.append_output('{},{}\n'.format(datetime.now(), m.as_string))
 
                 self._queue.task_done()
-            else:
-                time.sleep(0.01)
+            
+            self.rest()

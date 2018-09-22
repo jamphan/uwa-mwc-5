@@ -24,8 +24,8 @@ def test_listener_SimpleWriteAndRead(capsys):
     s = serial.serial_for_url(url="loop://",
                               timeout=10,
                               baudrate=115200)
-    l = Listener(s, message_prototype=MsgTestClass)
-    w = Worker()
+    l = Listener(s, message_prototype=MsgTestClass, rest=0.01)
+    w = Worker(rest=0.01)
     l.set_worker(w)
     l.start()
 

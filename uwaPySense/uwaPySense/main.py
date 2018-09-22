@@ -14,8 +14,8 @@ def main():
                               timeout=args.time_out,
                               baudrate=int(args.baud_rate))
 
-    l = Listener(s, message_prototype=args.message_type)
-    l.set_worker(Worker())
+    l = Listener(s, message_prototype=args.message_type, rest=0.01)
+    l.set_worker(Worker(rest=0.01))
     l.start()
 
     print('Listening...')
