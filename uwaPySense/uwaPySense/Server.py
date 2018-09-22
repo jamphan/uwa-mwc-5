@@ -18,6 +18,16 @@ import time
 import serial
 from datetime import datetime
 
+__stop_all_event__ = threading.Event()
+
+def loop():
+    
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        __stop_all_event__.set()
+
 class StoppableThread(threading.Thread):
     """ A thread which has flags to determine whether or not it should 
     abruptly be stopped or not. All objects that are derived from this class
@@ -30,10 +40,14 @@ class StoppableThread(threading.Thread):
                        iteration
     """
 
-    def __init__(self, rest=0):
+    def __init__(self, rest=0.001, event=__stop_all_event__):
 
         threading.Thread.__init__(self)
-        self._stop_event = threading.Event()
+        if not(isinstance(event, threading.Event)):
+            self._stop_event = threading.Event()
+        else:
+            self._stop_event = event
+
         self._stop_event.clear()
 
         self._rest = rest

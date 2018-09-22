@@ -1,7 +1,7 @@
 import time
 import serial
 
-from uwaPySense.Server import Listener, Worker
+from uwaPySense.Server import Listener, Worker, loop
 import uwaPySense.cli
 import uwaPySense.messages
 
@@ -14,23 +14,14 @@ def main():
                               timeout=args.time_out,
                               baudrate=int(args.baud_rate))
 
-    l = Listener(s, message_prototype=args.message_type, rest=0.01)
-    l.set_worker(Worker(rest=0.01))
+    l = Listener(s, message_prototype=args.message_type)
+    l.set_worker(Worker())
     l.start()
 
     print('Listening...')
     print('Ctrl+C to stop\n')
 
-    mins_elapsed = 0
-    try:
-        while(True):
-
-            # A delay is required so that the user can break program
-            time.sleep(60) 
-            mins_elapsed += 1
-            print("\tTime elapsed: {} mins".format(mins_elapsed))
-    except KeyboardInterrupt:
-        l.stop()
+    loop()
 
 if __name__ == '__main__':
     main()
