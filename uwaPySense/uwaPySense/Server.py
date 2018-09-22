@@ -1,19 +1,22 @@
-""" Clients write to database
+""" Listeners are responsible for listening into the network, capturing all the
+data and writing it to file.
 
-Changes:
-    2018/09/07: Jamie Phan, Initial version
+The Listener is design to run on a device which is network enabled through
+an external device as seen below
+     ___________                     ___________
+    |           |                   |           |
+    | Listener  | <---- USB ------- | Network   |
+    |           |                   | device    |
+    |___________|                   |___________| 
+
 """
 
-import os
-import sys
 import abc
-import serial
 import threading
-import time
 import queue
+import time
+import serial
 from datetime import datetime
-
-import uwaPySense.messages
 
 class StoppableThread(threading.Thread):
     """ A thread which has flags to determine whether or not it should 
@@ -48,8 +51,7 @@ class StoppableThread(threading.Thread):
         """ This method allows derived classes to specify how to clean up their
         processes on a stop event.
         """
-
-        os._exit(0)
+        pass
 
     @property
     def isStopped(self):
@@ -64,7 +66,8 @@ class Listener(StoppableThread):
 
     Args:
         serialPort: An open serial port object with read and write methods
-        message_prototype: This is the class prototype for the message structure to use
+        message_prototype: This is the class prototype for the message structure to use. This
+                           must be of type uwaPySense.messages.Msg
 
     Attributes:
         _serial (serial.serial): The open serial port the object is instantiated
@@ -72,21 +75,30 @@ class Listener(StoppableThread):
         _queue (queue.Queue): This is a shared memory space between this object
                               and the child Worker object. This is the
                               primary method of communication between the 
-                              threads
+                              threads.
         _worker (Worker): The child thread which must handle all the write 
                           and processing operations
 
     """
 
-    def __init__(self, serialPort, message_prototype = uwaPySense.messages.Msg):
+    def __init__(self, serialPort, message_prototype):
         
         super().__init__()
 
         self._serial = serialPort
         self._queue = queue.Queue()
-
-        self._worker = Worker(self._queue)
         self._msg_prototype = message_prototype
+
+    def set_worker(self, w):
+        """ Set the worker for the listener. This must be set prior to starting
+        the Listener thread
+        """
+
+        if not(isinstance(w, StoppableThread)):
+            raise TypeError("The worker must be of class StoppableThread")
+        else:
+            self._worker = w
+            self._worker.assign_to(self._queue)
 
     def run(self):
         """ The main loop for the Listener thread. Note this overrides the
@@ -94,17 +106,25 @@ class Listener(StoppableThread):
         of this thread.
         """
 
-        self._worker.start()
+        if self._worker is None:
+            raise SystemError("No worker assigned to Listener. Cannot start the thread!")
+        else:
+            self._worker.start()
 
         while not(self.isStopped):
 
-            ser_bytes = self._serial.readline()
-            m = self._msg_prototype(ser_bytes, word_len = len(ser_bytes)-1)
+            ser_bytes = self._serial.read_until(self._msg_prototype._end_flag)
+            m = self._msg_prototype(ser_bytes, word_len=len(ser_bytes))
 
             if m.is_valid():
                 self._queue.put_nowait(m)
+            else:
+                time.sleep(0.01)
 
     def clean_up(self):
+        """ Final clean up when the thread stops
+        """
+
         self._worker.stop()
         self._serial.close()
 
@@ -118,12 +138,28 @@ class Worker(StoppableThread):
                               threads
     """
 
-    def __init__(self, queue):
+    def __init__(self, write_to = None):
         
         super().__init__()
-        self._queue = queue
+        self._write_to = write_to
 
-        self._output = open('test.csv', 'w')
+    def assign_to(self, q):
+        """ Assign the worker to a queue
+        """
+
+        if not(isinstance(q, queue.Queue)):
+            raise TypeError("Workers can only work on queue.Queue types")
+        else:
+            self._queue = q
+
+    def append_output(self, line):
+        """ Have the worker write to a file
+        """
+
+        if self._write_to is not None:
+            fd = open(self._write_to, 'a')
+            fd.write(line)
+            fd.close()
 
     def run(self):
         """ The main loop for the Worker thread. Note this overrides the
@@ -134,16 +170,11 @@ class Worker(StoppableThread):
         while not(self.isStopped):
 
             if not(self._queue.empty()):
-                m = self._queue.get_nowait()
-                
-                # TODO: Replace with actual logic
-                # Placeholder
-                self._output.write('{},{}\n'.format(datetime.now(), m.as_json))
+                m = self._queue.get()
 
-                # End placeholder
+                print('{},{}'.format(datetime.now(), m.as_string))
+                self.append_output('{},{}\n'.format(datetime.now(), m.as_string))
 
                 self._queue.task_done()
-
-    def clean_up(self):
-
-        self._output.close()
+            else:
+                time.sleep(0.01)
