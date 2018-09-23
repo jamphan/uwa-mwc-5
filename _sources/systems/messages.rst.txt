@@ -1,0 +1,32 @@
+Messages 
+--------
+
+.. code-blocK:: python
+
+    from uwaPySense.messages import Msg
+
+    class CustomMessage(Msg):
+
+        # You must specify the end of the frame.
+        # If this is not specified, the default LF will be used
+        _end_flag = bytearray()
+        _end_flag.extend(map(ord, 'END'))
+
+        def is_valid(self):
+            """ The is_valid() method allows the Listener to determine if the message
+            is destined for it or not"""
+
+            if self.as_string.startswith('MyCustomMessage:'):
+                return True
+            else:
+                return False
+
+Once your custom message structure is defined, you will need to pass the import 
+address to the program. If the above example was stored in the ``~/Documents/``
+directory with filename ``test.py`` you will need to navigate to the directory
+and run the program from there, with the ``-m``flag in the format <SCRIPT>.<CLASS>:
+
+.. code-block:: bash
+
+   $ cd ~.Documents/
+   $ python -m uwaPySense -p COM4 -m test.CustomMessage

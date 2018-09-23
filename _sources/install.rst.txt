@@ -14,55 +14,92 @@ is such that when you list-directory with ``ls`` you can see a ``setup.py`` file
 Because the package is currently under a proof-of-concept stage, and that it is
 not published (yet) we recommend installing with the ``-e`` switch.
 
-Running
--------
+The most basic example
+----------------------
 
-Once installed, you will need to specify the **Message structure** of your 
-network protocol. This is specified through a dervied ``Msg`` class.
+Using the default configurations, the script below is all that is required:
 
-.. code-blocK:: python
+.. note::
+   
+   The default ``Listener`` configuration listens for all messages on the serial
+   line the are not blank and end with a newline.
 
-    from uwaPySense.messages import Msg
-
-    class CustomMessage(Msg):
-
-        # You must specify the end of the frame.
-        # If this is not specified, the default LF will be used
-        _end_flag = bytearray()
-        _end_flag.extend(map(ord, 'END'))
-
-        def is_valid(self):
-            """ The is_valid() method allows the Listener to determine if the message
-            is destined for it or not"""
-
-            if self.as_string.startswith('MyCustomMessage:'):
-                return True
-            else:
-                return False
-
-Alternatively, you may use some of the default message structures.
-
-Once your custom message structure is defined, you will need to pass the import 
-address to the program. If the above example was stored in the ``~\Documents\``
-directory with filename ``test.py`` you will need to navigate to the directory
-and run the program from there, with the ``-m``flag in the format <SCRIPT>.<CLASS>:
 
 .. code-block:: bash
 
-   $ cd ~\Documents\
-   $ python -m uwaPySense -p COM4 -m test.CustomMessage
+   $ python -m uwaPySense -p <PORT>
+
+
+Configuration
+-------------
+
+The package offers several configurations to suit your network implementaiton.
+To do so, you must specify your own custom script that enumerate these configurations.
+For example:
+
+.. code-block:: python
+
+    # my_listener.py
+
+    import uwaPySense
+
+    @uwaPySense.messages.end_flag
+    def flag(m):
+
+        return 'END'
+
+    @uwaPySense.messages.is_valid
+    def valid(m):
+
+        if len(m.as_string) > 0 and m.as_string[0].isdigit():
+            return True
+        else:
+            return False
+
+    def post_setup(ctx):
+        print("\nListening on {}".format(ctx.serial_port))
+        print("\tBaud rate = {:.0f}".format(ctx.baud_rate))
+        print("\tTime out = {:.2f}".format(ctx.time_out))
+        print("Press Ctrl+C to stop\n")
+
+        ctx.counter = 0
+
+    @uwaPySense.listenerloop(rest_time=60, post_setup=post_setup)
+    def main(ctx):
+        """ Program main loop"""
+
+        ctx.counter += 1
+        print("Time elapsed = {} mins".format(ctx.counter))
+
+    if __name__ == '__main__':
+        main()
+
+You can then call this script, and the program will run as configured. In this
+example, the following configurations were made
+
+- The ``flag()`` decorated function specifies the end of the frame for all messages. In this case the string sequence ``END``
+- the ``valid()`` decorated function specifies the conditions that a message is considered valid
+- the ``main()`` decorated function modifies the ``Listener`` loop to keep a counter that was setup in the ``post_setup()`` routine
 
 Note, that you **must** specify a port for the Listener to listen to with the ``-p`` flag.
+
+Once the ``my_listener.py/`` script is saved, you simply run the program from console as follows
+
+.. code-block:: bash
+
+   $ python my_listener.py -p COM3 --baud-rate 9600
+
+Notice how all the command line switches are carried over to your script.
 
 You can also specify the baud-rate with the ``--baud-rate`` flag
 
 .. code-block:: bash
 
-   $ python -m uwaPySense -p COM3 --baud-rate 9600
+   $ python my_listener.py -p COM3 --baud-rate 9600
 
 For more information see:
 
 .. code-block:: bash
 
-   $ python -m uwaPySense.main --help
+   $ python my_listener.py --help
 
