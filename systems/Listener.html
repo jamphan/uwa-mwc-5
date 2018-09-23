@@ -159,9 +159,6 @@
 <h1>Listner<a class="headerlink" href="#listner" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal"><span class="pre">Listner</span></code> class is responsible for collecting all messages and writing
 them into storage.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python -m uwaPySense.Server
-</pre></div>
-</div>
 <div class="section" id="design">
 <h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
 <p>The Listener is a multi-thread process, which recieves data from its host’s
@@ -170,16 +167,46 @@ serial line, and writes data - either to file, or through a TCP/IP network.</p>
 thread (<code class="docutils literal"><span class="pre">Listener</span></code>) and a <code class="docutils literal"><span class="pre">Worker</span></code> thread. The <code class="docutils literal"><span class="pre">Listener</span></code> instance handles
 all incoming data on the serial line; it’s core functions are to:</p>
 <ul class="simple">
-<li>Clear the serial recieve buffer to prevent the less powerful serial device</li>
+<li>Clear the serial recieve buffer to prevent the less powerful serial device from overflowing its transmit serial buffer</li>
+<li>Identify if the inbound messages are valid, and if they are</li>
+<li>Put the valid messages into a queue for processing</li>
 </ul>
-<p>from overflowing its transmit serial buffer
-* Identify if the inbound messages are valid, and if they are
-* Put the valid messages into a queue for processing</p>
 <p>The <code class="docutils literal"><span class="pre">Worker</span></code> thread reads from the queue and is responsible for;</p>
 <ul class="simple">
 <li>Formatting messages into writable forms</li>
 <li>Writing the messages into storage</li>
 </ul>
+<p>Inspecting the <code class="docutils literal"><span class="pre">__main__.py</span></code> package module, we can see that three core objects
+must be instantiated:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">Listener</span></code> class</li>
+<li>The <code class="docutils literal"><span class="pre">Worker</span></code> class</li>
+<li>The <code class="docutils literal"><span class="pre">Serial</span></code> class</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Program entry point.&quot;&quot;&quot;</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">uwaPySense</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">arg_parser</span><span class="p">()</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">serial_for_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">serial_port</span><span class="p">,</span>
+                            <span class="n">timeout</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">time_out</span><span class="p">,</span>
+                            <span class="n">baudrate</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">baud_rate</span><span class="p">))</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">Listener</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">message_prototype</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">message_type</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">set_worker</span><span class="p">(</span><span class="n">Worker</span><span class="p">())</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">loop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Worker</span></code> object is assigned to the <code class="docutils literal"><span class="pre">Listener</span></code> through the <code class="docutils literal"><span class="pre">set_worker()</span></code>
+method. This was done to allow developers to have full contorl on how they
+wish to setup their own custom workers.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A <code class="docutils literal"><span class="pre">Worker</span></code> class of class <code class="docutils literal"><span class="pre">uwaPySense.Server.StoppableThread</span></code> must be set to the
+<code class="docutils literal"><span class="pre">Listener</span></code> before the main loop can be run</p>
+</div>
 </div>
 </div>
 

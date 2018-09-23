@@ -11,17 +11,48 @@ is such that when you list-directory with ``ls`` you can see a ``setup.py`` file
 
     $ python -m pip install -e .
 
+Because the package is currently under a proof-of-concept stage, and that it is
+not published (yet) we recommend installing with the ``-e`` switch.
+
 Running
 -------
 
-The ``main`` module takes command-line arguments and can be run from any directory
-once it is installed.
+Once installed, you will need to specify the **Message structure** of your 
+network protocol. This is specified through a dervied ``Msg`` class.
 
-To start a ``Listener`` instance, you need to run the main module on the specified port:
+.. code-blocK:: python
+
+    from uwaPySense.messages import Msg
+
+    class CustomMessage(Msg):
+
+        # You must specify the end of the frame.
+        # If this is not specified, the default LF will be used
+        _end_flag = bytearray()
+        _end_flag.extend(map(ord, 'END'))
+
+        def is_valid(self):
+            """ The is_valid() method allows the Listener to determine if the message
+            is destined for it or not"""
+
+            if self.as_string.startswith('MyCustomMessage:'):
+                return True
+            else:
+                return False
+
+Alternatively, you may use some of the default message structures.
+
+Once your custom message structure is defined, you will need to pass the import 
+address to the program. If the above example was stored in the ``~\Documents\``
+directory with filename ``test.py`` you will need to navigate to the directory
+and run the program from there, with the ``-m``flag in the format <SCRIPT>.<CLASS>:
 
 .. code-block:: bash
 
-   $ python -m uwaPySense.main -p <PORT>
+   $ cd ~\Documents\
+   $ python -m uwaPySense -p COM4 -m test.CustomMessage
+
+Note, that you **must** specify a port for the Listener to listen to with the ``-p`` flag.
 
 You can also specify the baud-rate with the ``--baud-rate`` flag
 
