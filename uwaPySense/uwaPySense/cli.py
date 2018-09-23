@@ -43,13 +43,6 @@ def arg_parser():
                         dest='time_out',
                         help='Specify a readline time-out for the serial port')
 
-    # Specify the output file
-    parser.add_argument('-o',
-                        action='store',
-                        default=None,
-                        dest='output_file',
-                        help='Specify the output file to write data to')
-
     # Specify the message structure
     parser.add_argument('--message-class',
                         action='store',

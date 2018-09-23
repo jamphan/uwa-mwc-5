@@ -5,7 +5,12 @@ app = uwaPySense.App()
 
 @app.addwork
 def _(m):
-    print("[{}]:\t{}".format(datetime.now(), m.as_string))
+    print("[{}]:\t{}".format(datetime.now(), m.as_string[:-1]))
+
+@app.addwork
+def _(m):
+    with open('output.txt', 'a') as fd:
+        fd.write("[{}]:\t{}".format(datetime.now(), m.as_string[:-1]))
 
 @app.setup
 def config(ctx):
