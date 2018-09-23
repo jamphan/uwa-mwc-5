@@ -41,7 +41,10 @@ For example:
 
     # my_listener.py
 
+    from datetime import datetime
     import uwaPySense
+
+    app = uwaPySense.App()
 
     @uwaPySense.messages.end_flag
     def flag(m):
@@ -56,7 +59,18 @@ For example:
         else:
             return False
 
-    def post_setup(ctx):
+    @app.addwork
+    def _(m):
+        print("[{}]:\t{}".format(datetime.now(), m.as_string))        
+
+    @app.addwork
+    def _(m):
+    
+        with open('output.txt', 'a') as fd:
+            fd.write("[{}]:\t{}".format(datetime.now(), m.as_string))      
+    
+    @app.setup()
+    def config(ctx):
         print("\nListening on {}".format(ctx.serial_port))
         print("\tBaud rate = {:.0f}".format(ctx.baud_rate))
         print("\tTime out = {:.2f}".format(ctx.time_out))
@@ -64,7 +78,7 @@ For example:
 
         ctx.counter = 0
 
-    @uwaPySense.listenerloop(rest_time=60, post_setup=post_setup)
+    @app.loop(rest_time=60)
     def main(ctx):
         """ Program main loop"""
 
@@ -79,7 +93,9 @@ example, the following configurations were made
 
 - The ``flag()`` decorated function specifies the end of the frame for all messages. In this case the string sequence ``END``
 - the ``valid()`` decorated function specifies the conditions that a message is considered valid
-- the ``main()`` decorated function modifies the ``Listener`` loop to keep a counter that was setup in the ``post_setup()`` routine
+- the ``confg()`` decorated function specifies any setup required before the main loop begins
+- the ``@addwork`` decorators specify additional work the ``Worker`` should perform for every message
+- the ``main()`` decorated function modifies the ``Listener`` loop to keep a counter that was setup in the ``config()`` routine
 
 Note, that you **must** specify a port for the Listener to listen to with the ``-p`` flag.
 
@@ -87,7 +103,7 @@ Once the ``my_listener.py/`` script is saved, you simply run the program from co
 
 .. code-block:: bash
 
-   $ python my_listener.py -p COM3 --baud-rate 9600
+   $ python my_listener.py -p COM3
 
 Notice how all the command line switches are carried over to your script.
 
