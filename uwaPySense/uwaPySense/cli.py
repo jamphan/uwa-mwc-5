@@ -10,6 +10,10 @@ import uwaPySense.messages
 
 def arg_parser():
 
+    # Make the namespaces
+    ctx = argparse.Namespace()
+    ctx.sys = argparse.Namespace()
+
     parser = argparse.ArgumentParser(description='UWA PySense',
                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=30))
 
@@ -83,4 +87,5 @@ def arg_parser():
         raise Exception(err_msg)
         return None
     else:
-        return args
+        ctx.args = args
+        return ctx

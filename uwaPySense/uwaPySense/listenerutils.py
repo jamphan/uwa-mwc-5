@@ -198,7 +198,7 @@ class Worker(StoppableThread):
         while not(self.isStopped):
 
             if not(self._queue.empty()):
-                m = self._queue.get()
+                m = self._queue.get_nowait()
 
                 for work in self._registrar:
                     work(m)
