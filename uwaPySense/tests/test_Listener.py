@@ -6,6 +6,7 @@ import serial
 import time
 import random
 import string
+from datetime import datetime
 
 from tests.MessageTestClass import MsgTestClass, MSG_HEAD
 from uwaPySense import Listener, Worker
@@ -26,6 +27,12 @@ def test_listener_SimpleWriteAndRead(capsys):
                               baudrate=115200)
     l = Listener(s, message_prototype=MsgTestClass)
     w = Worker()
+    workregister = w.get_register()
+
+    @workregister
+    def _(m):
+        print("{},{}".format(datetime.now(), m.as_string))
+
     l.set_worker(w)
     l.start()
 
@@ -65,6 +72,12 @@ def test_listener_BadWriteNoRead(capsys):
                               baudrate=115200)
     l = Listener(s, message_prototype=MsgTestClass)
     w = Worker()
+    workregister = w.get_register()
+
+    @workregister
+    def _(m):
+        print("{},{}".format(datetime.now(), m.as_string))
+
     l.set_worker(w)
     l.start()
 

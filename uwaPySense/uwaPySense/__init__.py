@@ -23,14 +23,20 @@ def listenerloop(rest_time=0.01, init=None, post_setup=None):
                                             timeout=ctx.time_out,
                                             baudrate=ctx.baud_rate)
                     l = Listener(s, message_prototype=ctx.message_type)
-                    l.set_worker(Worker())
+                    w = Worker()
+                    l.set_worker(w)
                     time.sleep(SETUP_DELAY)
-                    l.start()
+
+                    ctx.Listener = l
+                    ctx.SerialPort = s
+                    ctx.Worker = w
                 else:
-                    init(ctx, **kwargs)
+                    ctx.Listener = init(ctx, **kwargs)
 
                 if post_setup is not None:
                     post_setup(ctx, **kwargs)
+
+                ctx.Listener.start()
 
                 while True:
                     time.sleep(rest_time)

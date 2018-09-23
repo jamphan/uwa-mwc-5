@@ -69,8 +69,12 @@ def default_is_valid(m):
     else:
         return False
 
+def default_end_flag(m):
+
+    return '\n'
+
 DECORATED_MSG = dict()
-DECORATED_MSG['end_flag'] = '\n'
+DECORATED_MSG['end_flag'] = default_end_flag
 DECORATED_MSG['is_valid'] = default_is_valid
 
 def is_valid(func):

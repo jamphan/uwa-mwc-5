@@ -11,14 +11,18 @@ an external device as seen below
 
 """
 
+import sys
 import abc
 import threading
 import queue
 import time
-from datetime import datetime
 
 import uwaPySense
 
+# This is a global event trigger to stop both the Listener and child-Worker 
+# at the same time. Note that the event to stop a StoppableThread is by a
+# keyword argument. This gives the option of running independent threads
+# that stop on their own accord (e.g. with a delay)
 __stop_all_event__ = threading.Event()
 
 class StoppableThread(threading.Thread):
@@ -46,6 +50,9 @@ class StoppableThread(threading.Thread):
         self._rest = rest
 
     def rest(self):
+        """ Resting is essential to ensure that the process does not flood with
+        several iterations in the main loop (that is indefinite...)
+        """
 
         if self._rest:
             time.sleep(self._rest)
@@ -155,10 +162,10 @@ class Worker(StoppableThread):
                               threads
     """
 
-    def __init__(self, write_to = None, **kwargs):
+    def __init__(self, **kwargs):
         
         super(Worker, self).__init__(**kwargs)
-        self._write_to = write_to
+        self._registrar = list()
 
     def assign_to(self, q):
         """ Assign the worker to a queue
@@ -169,14 +176,18 @@ class Worker(StoppableThread):
         else:
             self._queue = q
 
-    def append_output(self, line):
-        """ Have the worker write to a file
+    def get_register(self):
+        """ returns a decorator to allow users to specify what work to 
+        add. Functions defined with the returned decrator will be added to
+        the registrar, which is called during the operation of the Worker
+        thread
         """
 
-        if self._write_to is not None:
-            fd = open(self._write_to, 'a')
-            fd.write(line)
-            fd.close()
+        def wrapper_registrar(func):
+            self._registrar.append(func)
+            return func
+
+        return wrapper_registrar
 
     def run(self):
         """ The main loop for the Worker thread. Note this overrides the
@@ -189,8 +200,8 @@ class Worker(StoppableThread):
             if not(self._queue.empty()):
                 m = self._queue.get()
 
-                print('{},{}'.format(datetime.now(), m.as_string))
-                self.append_output('{},{}\n'.format(datetime.now(), m.as_string))
+                for work in self._registrar:
+                    work(m)
 
                 self._queue.task_done()
             
