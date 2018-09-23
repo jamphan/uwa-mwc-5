@@ -1,9 +1,9 @@
-import time
+import inspect
 import serial
+import importlib
 
 from uwaPySense.Server import Listener, Worker, loop
 import uwaPySense.cli
-import uwaPySense.messages
 
 def main():
     """ Program entry point."""
@@ -17,9 +17,6 @@ def main():
     l = Listener(s, message_prototype=args.message_type)
     l.set_worker(Worker())
     l.start()
-
-    print('Listening...')
-    print('Ctrl+C to stop\n')
 
     loop()
 
