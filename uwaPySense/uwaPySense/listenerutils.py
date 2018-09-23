@@ -15,18 +15,11 @@ import abc
 import threading
 import queue
 import time
-import serial
 from datetime import datetime
 
-__stop_all_event__ = threading.Event()
+import uwaPySense
 
-def loop():
-    
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        __stop_all_event__.set()
+__stop_all_event__ = threading.Event()
 
 class StoppableThread(threading.Thread):
     """ A thread which has flags to determine whether or not it should 

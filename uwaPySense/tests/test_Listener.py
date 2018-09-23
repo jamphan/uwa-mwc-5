@@ -8,7 +8,7 @@ import random
 import string
 
 from tests.MessageTestClass import MsgTestClass, MSG_HEAD
-from uwaPySense.Server import Listener, Worker
+from uwaPySense import Listener, Worker
 
 def test_listener_SimpleWriteAndRead(capsys):
     """ Basic test by writing to a serial line (loop:\\) and checking that
