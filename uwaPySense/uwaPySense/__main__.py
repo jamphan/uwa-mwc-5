@@ -1,21 +1,20 @@
 from datetime import datetime
-
 import uwaPySense
 
+app = uwaPySense.App()
+
+@app.addwork
+def _(m):
+    print("[{}]:\t{}".format(datetime.now(), m.as_string))
+
+@app.setup
 def config(ctx):
     print("\nListening on {}".format(ctx.args.serial_port))
     print("\tBaud rate = {:.0f}".format(ctx.args.baud_rate))
     print("\tTime out = {:.2f}".format(ctx.args.time_out))
     print("Press Ctrl+C to stop\n")
-    
-    @ctx.WorkRegister
-    def _(m):
-        now = datetime.now()
-        print("[{}]:\t{}".format(now, m.as_string))
 
-    ctx.counter = 0
-
-@uwaPySense.listenerloop(rest_time=60, post_setup=config)
+@app.loop(rest_time=60)
 def main(ctx):
 
     ctx.counter += 1
