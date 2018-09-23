@@ -129,9 +129,9 @@ class Listener(StoppableThread):
             self._worker.start()
 
         while not(self.isStopped):
-
-            ser_bytes = self._serial.read_until(self._msg_prototype._end_flag)
-            m = self._msg_prototype(ser_bytes, word_len=len(ser_bytes))
+            
+            m = self._msg_prototype()
+            m.raw = self._serial.read_until(m.end_flag)
 
             if m.is_valid():
                 self._queue.put_nowait(m)

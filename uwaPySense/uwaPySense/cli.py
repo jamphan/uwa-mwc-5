@@ -8,8 +8,6 @@ import argparse
 
 import uwaPySense.messages
 
-VALID_MSG_TYPES = {'RF': uwaPySense.messages.RFMsg}
-
 def arg_parser():
 
     parser = argparse.ArgumentParser(description='UWA PySense',
@@ -49,9 +47,9 @@ def arg_parser():
                         help='Specify the output file to write data to')
 
     # Specify the message structure
-    parser.add_argument('-m',
+    parser.add_argument('--message-class',
                         action='store',
-                        default='Test',
+                        default=None,
                         dest='message_type',
                         help='Specify the message structure. You can use your own Msg class with <Module>.<Class>')
 
@@ -66,12 +64,12 @@ def arg_parser():
         stop_flag = True
         err_list.append("Must specify a serial port with -p")
 
-    if args.message_type not in VALID_MSG_TYPES:
+    if args.message_type is not None:
         [mod, kls] = args.message_type.split('.')
         module = importlib.import_module(mod)
         args.message_type = getattr(module, kls)
     else:
-        args.message_type = VALID_MSG_TYPES[args.message_type]
+        args.message_type = uwaPySense.messages.DecoratedMsg
 
     if args.time_out <= 0:
         stop_flag = True

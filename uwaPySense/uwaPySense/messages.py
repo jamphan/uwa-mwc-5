@@ -1,31 +1,23 @@
+""" Messages - in this context - is defined as the information that is sent to
+the Listener and satisfies certain conditions. In particular the message must
+be valid (as dictated by the is_valid()) method, and the series of bytes
+on the serial line must be terminated with the specified _end_flag.
+
+"""
 import abc
 import json
 
-def to_bytes(seq):
-    """convert a sequence to a bytes type"""
-    if isinstance(seq, bytes):
-        return seq
-    elif isinstance(seq, bytearray):
-        return bytes(seq)
-    elif isinstance(seq, memoryview):
-        return seq.tobytes()
-    elif isinstance(seq, str):
-        raise TypeError('unicode strings are not supported, please encode to bytes: {!r}'.format(seq))
-    else:
-        # handle list of integers and bytes (one or more items) for Python 2 and 3
-        return bytes(bytearray(seq))
-
 class Msg(object):
+    """ This base class ensures three things:
+        (1) A default _end_flag is specified
+        (2) An abstract method is_valid() is provided
+        (3) The data that meets the conditions specified in (1) and (2) is
+            stored into a .raw and .as_string property
+    """
 
-    _end_flag = bytearray()
-    _end_flag.extend(map(ord, '\n'))
+    def __init__(self):
 
-    def __init__(self, bytes_in, word_len=8):
-
-        self._raw = bytes_in
-        self._word_len = word_len
-
-        self._as_string = self._raw[0:self._word_len].decode("utf-8")
+        self.end_flag = '\n'
 
     @abc.abstractmethod
     def is_valid(self):
@@ -40,40 +32,63 @@ class Msg(object):
         pass
 
     @property
+    def end_flag(self):
+        return self._end_flag
+
+    @end_flag.setter
+    def end_flag(self, val):
+        self._end_flag = bytearray()
+        self._end_flag.extend(map(ord, val))
+
+    @property
+    def raw(self):
+
+        return self._raw
+
+    @raw.setter
+    def raw(self, val):
+        self._raw = val
+        self._word_len = len(self._raw)
+        self._as_string = self._raw[0:self._word_len].decode("utf-8")
+
+    @property
     def as_string(self):
-        """ Returns the raw message recieved from the serial line with no 
+        """ Returns the raw message recieved from the serial line with no
         formatting.
         """
 
         return self._as_string
 
-    @property
-    def as_json(self):
-        """ Formats the message in the JSON format required for the NoSQL db
-        """
+# We define a decorated version of the base MSG class to allow users to specify
+# their own conditions for a valid message
 
-        return self._raw
+def default_is_valid(m):
 
-class RFMsg(Msg):
+    if len(m.as_string) > 0:
+        return True
+    else:
+        return False
+
+DECORATED_MSG = dict()
+DECORATED_MSG['end_flag'] = '\n'
+DECORATED_MSG['is_valid'] = default_is_valid
+
+def is_valid(func):
+    DECORATED_MSG['is_valid'] = func
+    return func
+
+def end_flag(func):
+    DECORATED_MSG['end_flag'] = func
+    return func
+
+class DecoratedMsg(Msg):
     """ This class is specific to the RF sensors"""
 
-    _end_flag = bytearray()
-    _end_flag.extend(map(ord, 'END'))
+    def __init__(self, *args, **kwargs):
+
+        super(DecoratedMsg, self).__init__(*args, **kwargs)
+        self.end_flag = DECORATED_MSG['end_flag'](self)
 
     def is_valid(self):
 
-        if len(self.as_string) > 0 and self.as_string[0].isdigit():
-            return True
-        else:
-            return False
-
-    @property
-    def as_json(self):
-
-        col_RRSI = 10
-
-        msg_parts = [float(x) for x in self.as_string.split(',')]
-        try:
-            return str(msg_parts[col_RRSI])
-        except IndexError:
-            return None
+        return DECORATED_MSG['is_valid'](self)
