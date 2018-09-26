@@ -59,6 +59,12 @@ class Msg(object):
 
         return self._as_string
 
+    @as_string.setter
+    def as_string(self, value):
+
+        self._as_string = value
+        
+
 # We define a decorated version of the base MSG class to allow users to specify
 # their own conditions for a valid message
 
