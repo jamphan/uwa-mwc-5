@@ -5,6 +5,16 @@ from datetime import datetime
 from app.database import BaseBinDb
 
 def recursive_dict_update(dst, src):
+    """ Update dst (dict) with src (dict). 
+    
+    This update method will:
+        - Add a key if the key does not exist in dst but does in src
+        - Append to the key if the key exists in dst and src and both are dict
+            typed
+        - Overwrite the key if the key exists in both but the type changes
+        - Recurse if the key exists in both, the types are the same, and the
+            value to update with is a dict
+    """
 
     if isinstance(src, dict):
         for k, v in src.items():
@@ -17,6 +27,10 @@ def recursive_dict_update(dst, src):
                     dst.update(src)
 
 class jsonDb(BaseBinDb):
+    """ This is a JSON implementation of the BaseBinDB base class.
+
+    See app.database.BaseBinDb (in __init__.py) for public API information
+    """
 
     def __init__(self, path='database.json', time_format='%Y-%m-%d %H:%M:%S'):
 
