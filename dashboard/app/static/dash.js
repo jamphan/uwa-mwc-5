@@ -1,13 +1,7 @@
 $(document).ready(function () {
 
     
-    makeSensorTable();
-    var marker = new google.maps.Marker({
-        position: {lat: -31.9787,lng: 115.8174},
-        map: map,
-        title: 'Hello World!',
-        label: '1',
-    });
+    processData();
 
     $('#sidebarCollapse').on('click', function () {
         // open or close navbar
@@ -29,16 +23,25 @@ $(document).ready(function () {
     });
 });
 
-function makeSensorTable(){
+function processData(){
     const table = document.getElementById('sensor-table');
-    console.log(Object.keys(data["bins"]).length);
-    for(var i = 1; i <= Object.keys(data["bins"]).length; i++){
-        const bin = data["bins"]["bin"+ i];
+    num_bins = bin_ids.length;
+    for (var i = 0; i < num_bins; i++){
+        const bin = data["bins"][bin_ids[i]];
         const depth = bin["depth"];
         const thresh = bin["threshold"];
-        const binData = data["data"]["bin" + i];
-        const dataLength = binData.length;
+        const binData = data["data"][bin_ids[i]];
+        const dataLength = binData["values"].length;
         const lastValue = binData["values"][dataLength-1];
-        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td><td>' + lastValue+ '</td></tr>');
+        const PercentFilled = (depth-lastValue)/(depth-thresh);
+        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td><td>' + PercentFilled+ '</td></tr>');
+        const num = i + 1;
+        // add bin marker to google map
+        var marker = new google.maps.Marker({
+            position: {lat: bin["lat"],lng: bin["long"]},
+            map: map,
+            title: bin_ids[i],
+            label: num.toString(),
+        });
     }
 };

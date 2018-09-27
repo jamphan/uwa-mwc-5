@@ -70,6 +70,7 @@
                       <p class = "card-title">Sensor Map</p>
                       <div id="map">
                         <script>
+                            var bin_ids = {{ bin_ids | safe }};
                             var map;
                             function initMap() {
                               map = new google.maps.Map(document.getElementById('map'), {
