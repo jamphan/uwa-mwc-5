@@ -1,7 +1,6 @@
 $(document).ready(function () {
 
-    console.log(data);
-    
+    console.log(data['bins']);
     var marker = new google.maps.Marker({
         position: {lat: -31.9787,lng: 115.8174},
         map: map,

@@ -1,7 +1,15 @@
-import json
+import json, os, io
 
 def getJSON():
-    with open("app/sensorData.json") as f:
+    with open("app/data.json") as f:
         data = json.load(f)
-        print(data["sensors"][0]);
     return(data)  
+
+def addToJSON(data):
+    if os.path.exists("./data.json"):
+        # checks if file exists
+        print ("./data.json File exists and is readable")
+    else:
+        print ("Either file is missing or is not readable, creating file...")
+        with open(os.path.join("./", "data.json"), 'w') as db_file:
+            db_file.write("hi")
