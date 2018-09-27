@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 
 from app.database import BaseBinDb
 
@@ -17,12 +18,16 @@ def recursive_dict_update(dst, src):
 
 class jsonDb(BaseBinDb):
 
-    def __init__(self, path='database.json'):
+    def __init__(self, path='database.json', time_format='%Y-%m-%d %H:%M:%S'):
 
         self._path = path
 
         self._key_bins = 'bins'
         self._key_sensors = 'sensors'
+        self._key_data = 'data'
+        self._key_data_timestamps = 'timestamps'    # Key for recording timestamps
+
+        self._time_format = time_format
 
         if os.path.exists(self._path):
             try:
@@ -43,6 +48,7 @@ class jsonDb(BaseBinDb):
         _base = dict()
         _base[self._key_bins] = dict()
         _base[self._key_sensors] = dict()
+        _base[self._key_data] = dict()
 
         return _base
 
@@ -99,8 +105,44 @@ class jsonDb(BaseBinDb):
 
         self._update({self._key_sensors: {sensor_id: sens_obj}})
 
+    def add_data(self, sensor_id, value, field='bin_values', timestamp=None):
+        
+        if not(self.is_sensor(sensor_id)):
+            return None
+        
+        linked_bin = self.get_info_sensor(sensor_id, key='linked_to')
+        if linked_bin is None:
+            return None
+
+        if timestamp is None:
+            timestamp = datetime.now()
+        
+        timestamp_as_str = timestamp.strftime(self._time_format)
+
+        # If no entries exist for this bin, make the base structure
+        if self.get_data_bin(linked_bin) is None:
+            _record_obj = dict()
+            _record_obj[self._key_data_timestamps] = [timestamp_as_str]
+            _record_obj[field] = [value]
+
+            _data_obj = {self._key_data: {self._key_bins: {linked_bin: _record_obj}}}
+
+            self._update(_data_obj)
+        else:
+            _existing_record = self.get_data_bin(linked_bin)
+            _existing_record[self._key_data_timestamps].append(timestamp_as_str)
+            _existing_record[field].append(value)
+
+            _data_obj = {self._key_data: {self._key_bins: {linked_bin: _existing_record}}}
+
+            self._update(_data_obj)
+
     def get_data_bin(self, bin_id, starting=None, ending=None):
-        pass
+        
+        try:
+            return self.data[self._key_data][self._key_bins][bin_id]
+        except KeyError:
+            return None
 
     def get_data_sensor(self, sensor_id, starting=None, ending=None):
         pass

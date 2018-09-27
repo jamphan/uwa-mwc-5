@@ -1,5 +1,7 @@
 import pytest
 import os
+from datetime import datetime
+import time
 
 from app.database.jsonDb import jsonDb
 
@@ -145,5 +147,23 @@ def test_jsonDB_linkSensor():
     assert db.is_sensor('test_sensor_1')
     assert db.is_bin('test_bin_1')
     assert db.is_bin(db.get_info_sensor('test_sensor_1', key='linked_to'))
+
+    clean_up()
+
+def test_jsonDb_addSensorData():
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_bin('test_bin_1')
+    db.add_sensor('test_sensor_1', linked_to='test_bin_1')
+
+    db.add_data('test_sensor_1', 10)
+
+    d = db.get_data_bin('test_bin_1')
+    assert d['bin_values'] == [10]
+
+    time.sleep(1)
+    db.add_data('test_sensor_1', 20)
+    d = db.get_data_bin('test_bin_1')
+    assert d['bin_values'] == [10, 20]
 
     clean_up()
