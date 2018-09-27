@@ -33,10 +33,12 @@ function makeSensorTable(){
     const table = document.getElementById('sensor-table');
     console.log(Object.keys(data["bins"]).length);
     for(var i = 1; i <= Object.keys(data["bins"]).length; i++){
-        const depth = data["bins"]["bin"+ i]["depth"];
-        const thresh = data["bins"]["bin"+ i]["threshold"];
-        const length = data["data"]["bin" + i]["values"].length;
-        const lastValue = data["data"]["bin" + i]["values"][length-1];
-        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td></tr>');
+        const bin = data["bins"]["bin"+ i];
+        const depth = bin["depth"];
+        const thresh = bin["threshold"];
+        const binData = data["data"]["bin" + i];
+        const dataLength = binData.length;
+        const lastValue = binData["values"][dataLength-1];
+        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td><td>' + lastValue+ '</td></tr>');
     }
 };
