@@ -1,0 +1,156 @@
+body{
+    font-family: 'Open Sans';
+    background-color: #f5f5f5;
+    letter-spacing: 0.5px;
+}
+button:focus {
+    outline:0;
+}
+#map {
+    height: 400px;
+  }
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+.card-title{
+ 
+}
+.navbar{
+    padding: 20px;
+    margin: 0px;
+    background: white;
+    margin-bottom: 30px;
+
+}
+#sidebar.active {
+    max-width: 60px;
+    min-width: 60px;
+}
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background: #282a36;
+    color: white;
+    transition: all 0.3s;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #282a36;
+    min-height: 140px;
+    max-height: 140px !important;
+}
+
+#sidebar ul.components {
+    color: rgb(192, 192, 192);
+    padding: 20px 0;
+    border-bottom: 1px solid #878cb6;
+}
+
+#sidebar ul p {
+    color: rgb(192, 192, 192);
+    padding: 20px;
+}
+
+#sidebar ul li a {
+    color: rgb(192, 192, 192);
+    padding: 10px;
+    padding-left: 20px;
+    font-size: 0.9em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color: white;
+    background: #53566e;
+    text-decoration: none !important;
+    transition: all 0.3s;
+}
+
+#sidebar ul li.active  a{
+    color: #fff;
+    background: rgb(85, 153, 255);;
+}
+#sidebarCollapse{
+    width: 30px;
+    height: 30px;
+    background: #f5f5f5;
+    border: 0;
+    margin: 10px;
+}
+#sidebarCollapse span {
+    width: 80%;
+    height: 2px;
+    margin: 0 auto;
+    display: block;
+    background: #555;
+    transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+}
+#sidebarCollapse span:first-of-type {
+    /* rotate first one */
+    transform: rotate(45deg) translate(2px, 2px);
+}
+#sidebarCollapse span:nth-of-type(2) {
+    /* second one is not visible */
+    opacity: 0;
+}
+#sidebarCollapse span:last-of-type {
+    /* rotate third one */
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+#sidebarCollapse.active span {
+    /* no rotation */
+    transform: none;
+    /* all bars are visible */
+    opacity: 1;
+    margin: 5px auto;
+}
+#homeTitle{
+    margin: auto;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.hidden {
+    display: none !important;
+    transition: all 0.3s;
+}
+.errorTxt{
+    color: red;
+}
+.goodTxt{
+    color: #20c997;
+}
+.card{
+    font-size: 0.7em;
+    padding: 1.3em !important;
+    border: none;
+}
+.table th{
+    border-top: 0;
+}
+.table th, .table td{
+    padding: 10px;
+}
+#content{
+    width: 100%;
+}
+.index{
+    color: rgb(85, 153, 255);
+    display: inline-block;
+}
+.cardHeading{
+    font-weight: normal;
+    color: rgb(119, 117, 117);
+    font-size: 1.1em;
+}
+.sidebar-label{
+    display: inline-block;
+    padding-left: 10px;
+}
+.sidebar-button{
+    max-height: 27px !important;
+}
+#uwa-icon{
+    height: 80px;
+}

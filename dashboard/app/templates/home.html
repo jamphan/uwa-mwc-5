@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta tags-->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/dash.css">
+    <link href="../assets/fontawesome/css/all.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class = "wrapper">
+    <!-- Sidebar -->
+    <nav class = "shadow-sm" id="sidebar">
+        <div class="sidebar-header">
+            <h6 class = "sidebar-title"><br>UWA SmartBin Network</h6>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class = "active">
+                <a href="#"><div class = "sidebar-button"><i class="icon fas fa-home"></i><div class = "sidebar-label">Dashboard</div></div></a>
+            </li>
+            <li>
+                <a href="/sensors"><div class = "sidebar-button"><i class="icon fas fa-wifi"></i><div class = "sidebar-label">Sensors</div></div></a>
+            </li>
+            <li>
+                <a href="/about"><div class = "sidebar-button"><i class="icon fas fa-help"></i><div class = "sidebar-label">About</div></div></a>
+            </li>
+        </ul>
+
+    </nav>
+    <!-- Page Content -->
+    <div id = "content">
+        <nav class="navbar navbar-expand-lg">
+            <div>
+                <button type="button" id="sidebarCollapse" class = "navbar-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <h6 id = "homeTitle">UWA SmartBin Network| <div class = "index">Dashboard</div> </h6>
+        </nav>
+      <div class = "container">
+          <div class = "container">
+              <div class="row">
+                  <div class="col-sm-6">
+                    <div class = "shadow-sm card">
+                        <p class = "card-title">Sensor Status</p>
+                        <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Value(cm)</th>
+                                <th scope="col">Bin Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for sensor in data["sensors"] %}
+                              <tr>
+                                <td>{{ sensor["id"] }}</td>
+                                <td>{{ sensor["location"] }}</td>
+                                <td>{{ sensor["value"] }}</td>
+                                {% if sensor["status"] == 'ok' %}
+                                <td><span class="badge badge-success">OK</span></td>
+                                {% elif sensor["status"] == 'full' %}
+                                <td><span class="badge badge-warning">Full</span></td>
+                                {% else %}
+                                <td><span class="badge badge-danger"> ! </span></td>
+                                {% endif %}
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class = "shadow-sm card">
+                      <p class = "card-title">Sensor Map</p>
+                      <div id="map">
+                        <script>
+                            var map;
+                            function initMap() {
+                              map = new google.maps.Map(document.getElementById('map'), {
+                                center: {lat: -31.9789,lng: 115.8178},
+                                zoom: 17,
+                                disableDefaultUI: true,
+                                scaleControl: true,
+                                zoomControl: true,
+                              });} 
+                              var data = JSON.parse(('{{ data | tojson | safe }}'));
+                          </script>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+      </div>
+    </div>
+  </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src = "../assets/dash.js"></script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAuLLstMh9g-tZy93dNv0zEXOWHQQ0hWs&callback=initMap" async defer></script>
+    
+  </body>
+
+</html>
