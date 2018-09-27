@@ -76,3 +76,13 @@ def test_getBinInfo():
     assert db.get_info_bin('test_bin_99', key='long') == 20
     assert db.get_info_bin('test_bin_99', key='capacity') == 100
     assert db.get_info_bin('test_bin_99', key='threshold') == 13
+
+    clean_up()
+
+def test_automaticallySetThreshold():
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_bin('test_bin_99', position=(10, 20), capacity=100)
+    assert db.get_info_bin('test_bin_99', key='threshold') == 100
+
+    clean_up()

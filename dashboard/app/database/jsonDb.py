@@ -60,6 +60,8 @@ class jsonDb(BaseBinDb):
 
         if fill_threshold is not None:
             bin_obj["threshold"] = fill_threshold
+        elif fill_threshold is None and capacity is not None:
+            bin_obj["threshold"] = capacity
 
         self._update({self._key_bins: {bin_id: bin_obj}})
     
@@ -76,17 +78,17 @@ class jsonDb(BaseBinDb):
         pass
 
     def get_info_bin(self, bin_id, key=None):
-        """ Returns the bin information
+        """ Returns the bin information for a particular bin
         """
 
         if bin_id not in self.data[self._key_bins]:
-            return -1
+            return None
         else:
             if key == None:
                 return self.data[self._key_bins][bin_id]
             else:
                 if key not in self.data[self._key_bins][bin_id]:
-                    return -1
+                    return None
                 else:
                     return self.data[self._key_bins][bin_id][key]
 
