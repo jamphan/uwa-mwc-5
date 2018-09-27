@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="static/dash.css">
     <link href="static/fontawesome/css/all.css" rel="stylesheet">
-
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
   </head>
   <body>
     <div class = "wrapper">
@@ -20,10 +20,10 @@
         </div>
 
         <ul class="list-unstyled components">
-            <li class = "active">
-                <a href="#"><div class = "sidebar-button"><i class="icon fas fa-home"></i><div class = "sidebar-label">Dashboard</div></div></a>
-            </li>
             <li>
+                <a href="/dash"><div class = "sidebar-button"><i class="icon fas fa-home"></i><div class = "sidebar-label">Dashboard</div></div></a>
+            </li>
+            <li class = "active">
                 <a href="/sensors"><div class = "sidebar-button"><i class="icon fas fa-wifi"></i><div class = "sidebar-label">Sensors</div></div></a>
             </li>
             <li>
@@ -42,46 +42,30 @@
                     <span></span>
                 </button>
             </div>
-            <h6 id = "homeTitle">UWA SmartBin Network | <div class = "index">Dashboard</div> </h6>
+            <h6 id = "homeTitle">UWA SmartBin Network | <div class = "index">Sensors</div> </h6>
         </nav>
       <div class = "container">
           <div class = "container">
-              <div class="row">
-                  <div class="col-sm-6">
                     <div class = "shadow-sm card">
-                        <h6 class = "card-title">Bin Sensor Status</h6>
-                        <table class="table table-hover">
-                            <thead>
-                              <tr>
-                                <th width = 70px scope="col">Bin ID</th>
-                                <th width = "200px" scope="col">Fill level</th>
-                                <th scope="col"></th>
-                                <th scope="col">Status</th>
-                              </tr>
-                            </thead>
-                            <tbody id = "sensor-table">
-                            </tbody>
-                          </table>
+                        <h6 class = "card-title">All Sensor Data</h6>
+                        <table id="myTable" class="display">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Bin ID</th>
+                                        <th>Sensor ID</th>
+                                        <th>Value</th>
+                                        <th>Location</th>
+                                        <th>RSSI</th>
+                                        <th>Sensor type</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sensor-data">
+                                </tbody>
+                            </table>
                     </div>
-                  </div>
-                  <div class="col-sm-6">
                     <div class = "shadow-sm card">
                       <h6 class = "card-title">Bin Locations</h6>
-                      <div id="map">
-                        <script>
-                            var bin_ids = {{ bin_ids | safe }};
-                            var map;
-                            function initMap() {
-                              map = new google.maps.Map(document.getElementById('map'), {
-                                center: {lat: -31.9789,lng: 115.8178},
-                                zoom: 16,
-                                disableDefaultUI: true,
-                                scaleControl: true,
-                                zoomControl: true,
-                              });} 
-                              var data = JSON.parse(('{{ data | tojson | safe }}'));
-                          </script>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -94,10 +78,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src = "static/dash.js"></script>
+    <script src = "static/sensors.js"></script>   
     <script src = "static/sidebar.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAuLLstMh9g-tZy93dNv0zEXOWHQQ0hWs&callback=initMap" async defer></script>
     
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+ 
   </body>
 
 </html>

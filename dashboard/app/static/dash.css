@@ -14,7 +14,7 @@ button:focus {
     align-items: stretch;
 }
 .card-title{
- 
+    font-size: 1.1em;
 }
 .navbar{
     padding: 20px;
@@ -131,6 +131,7 @@ button:focus {
 }
 .table th, .table td{
     padding: 10px;
+    text-align: center;
 }
 #content{
     width: 100%;
