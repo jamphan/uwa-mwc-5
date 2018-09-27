@@ -2,6 +2,8 @@ import pytest
 import os
 from datetime import datetime
 import time
+import random
+import collections
 
 from app.database.jsonDb import jsonDb
 
@@ -180,3 +182,58 @@ def test_jsonDb_addDiagnosticData():
     assert d['diagnostics'] == [10]
 
     clean_up()
+
+def test_jsonDb_LargeNetwork():
+    """ Test with large number of sensors
+    """
+
+    N_ELEMENTS = 10
+    N_DATA_PTS = 20
+
+    db = jsonDb(path=TEST_DB_FILE)
+
+    for i in range(N_ELEMENTS):
+        bin_id = "test_bin_{:d}".format(i)
+        pos = (random.uniform(-180, 180), random.uniform(-90, 90))
+        cap = random.uniform(10,100)
+        db.add_bin(bin_id, position=pos, capacity=cap)
+    
+        sens_id = "test_sensor_{:d}".format(i)
+        db.add_sensor(sens_id, linked_to=bin_id)
+
+    assert len(db.get_all_bins()) == N_ELEMENTS
+    assert len(db.get_all_sensors()) == N_ELEMENTS
+
+    expected_data = collections.defaultdict(list)
+    expected_diag = collections.defaultdict(list)
+
+    for i in range(N_DATA_PTS):
+
+        rand_sensor_id = random.randint(0, N_ELEMENTS-1)
+        sens_id = "test_sensor_{:d}".format(rand_sensor_id)
+
+        rand_data = random.uniform(-100, 100)
+        rand_diag = random.uniform(-100, 100)
+
+        expected_data[sens_id].append(rand_data)
+        expected_diag[sens_id].append(rand_diag)
+
+        db.add_data(sens_id, rand_data)
+        db.add_diagnostics(sens_id, rand_diag)
+
+    # Check answers
+    for i in range(N_ELEMENTS):
+        bin_id = "test_bin_{:d}".format(i)
+        sens_id = "test_sensor_{:d}".format(i)
+
+        actual = db.get_data_bin(bin_id)
+        if actual is None:
+            assert len(expected_data[sens_id]) == 0
+        else:
+            assert actual['bin_values'] == expected_data[sens_id]
+
+        actual = db.get_data_sensor(sens_id)
+        if actual is None:
+            assert len(expected_diag[sens_id]) == 0
+        else:
+            assert actual['diagnostics'] == expected_diag[sens_id]
