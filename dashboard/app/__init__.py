@@ -1,33 +1,25 @@
 from flask import Flask
+from flask_mqtt import Mqtt
 flaskApp = Flask(__name__)
+
 from app import routes
+from app import server
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-app = dash.Dash(__name__, server=flaskApp)
+flaskApp.config['MQTT_BROKER_URL'] = 'm2m.eclipse.org'
 
-app.layout = html.Div(children=[
-    html.H1(children='UWA Bin Level Sensor Network'),
+mqtt = Mqtt(flaskApp)
+mqtt.subscribe('UWA/CITS/#')
 
-    html.Div(children='''
-        A network t.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-            ],
-            'layout': {
-                'title': 'Dash Data Visualization'
-            }
-        }
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode()
     )
-])
-
+    server.addToJSON(data);
 if __name__ == '__main__':
 	# app.run_server(debug=True, port=8050, host='127.0.0.1')
-	app.run_server(debug=True)
+	flaskApp.run_server(debug=True)

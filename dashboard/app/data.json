@@ -1,0 +1,53 @@
+{
+    "bins":{
+      "bin1": {
+        "lat": -12.370790,
+        "long": 130.866750,
+        "depth": 120,
+        "threshold": 20
+      },
+      "bin2": {
+        "lat": -12.370793,
+        "long": 130.866752,
+        "depth": 120,
+        "threshold": 20
+      },
+      "bin3": {
+        "lat": -12.370789,
+        "long": 130.866750,
+        "depth": 120,
+        "threshold": 20
+      }, 
+      "bin4": {
+        "lat": -12.370788,
+        "long": 130.866752,
+        "depth": 120,
+        "threshold": 20
+      }
+    },
+    "sensors":{
+        "a1d3": {
+            "type": "Arduino",
+            "bin_number": 1
+        },
+        "e4g9": {
+            "type": "Arduino",
+            "bin_number": 2
+        },
+        "l8d0": {
+            "bin_number": 1
+        }
+    },
+    "data":{
+        "bin1": {
+            "timestamps": ["2018-09-27 15:57", "2018-09-27 16:20", "2018-09-27 17:04"],
+            "values": [20, 30, 40],
+            "RSSI_values": [-80, -70, -40]
+        },
+        "bin2": {
+            "timestamps": ["2018-09-27 15:57", "2018-09-27 16:20", "2018-09-27 17:04"],
+            "values": [20, 40, 30],
+            "RSSI_values": [-80, -70, -40]
+        }
+    }
+}
