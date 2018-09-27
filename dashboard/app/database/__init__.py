@@ -74,6 +74,21 @@ class BaseBinDb(object):
 
     @abc.abstractmethod
     def get_info_sensor(self, sensor_id, key=None):
+        """ Returns the sensor information for a particular sensor
+
+        Args:
+            sensor_id (str): The sensor to get information for
+            key (str, default=None): this will get a particular piece of 
+                information relevant to the sensor. Available keys are:
+                    - type (str): The latitude of the bin
+                    - linked_to (str): The bin_id that it is sensing
+
+        Returns:
+            None: If there are any key errors
+            dict: If key = None
+            float: If key is not none and there are no key errors
+        """
+
         pass
 
     @abc.abstractmethod
@@ -87,4 +102,35 @@ class BaseBinDb(object):
 
     @abc.abstractmethod
     def get_all_sensors(self):
+        """ Get all the ids of the sensors registerd in database
+
+        Returns:
+            list: A list of all sensors ids
+        """
+        pass
+
+    @abc.abstractmethod
+    def is_bin(self, test_id):
+        """ Test whether the request id is a bin or not
+
+        Args:
+            test_id (str): The item to test
+
+        Returns:
+            True: if test_id is a bin in the database
+            False: Otherwise
+        """
+        pass
+
+    @abc.abstractmethod
+    def is_sensor(self, test_id):
+        """ Test whether the request id is a sensor or not
+
+        Args:
+            test_id (str): The item to test
+
+        Returns:
+            True: if test_id is a sensor in the database
+            False: Otherwise
+        """
         pass

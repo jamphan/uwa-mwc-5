@@ -86,3 +86,64 @@ def test_automaticallySetThreshold():
     assert db.get_info_bin('test_bin_99', key='threshold') == 100
 
     clean_up()
+
+def test_verifyIsBin():
+    """ Test to see if DB can properly determine if a given ID is 
+    a bin or not
+    """
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_bin('test_bin_99', position=(10, 20), capacity=100)
+
+    assert not(db.is_bin('not_a_bin'))
+    assert db.is_bin('test_bin_99')
+
+    clean_up()
+
+def test_jsonDB_badBinRequest():
+    """ Test that None's are retured for information that doesn't exist
+    """
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_bin('test_bin_99')
+
+    assert db.is_bin('test_bin_99')
+    assert db.get_info_bin('test_bin_99', key='lat') is None
+    assert db.get_info_bin('test_bin_99', key='long') is None
+    assert db.get_info_bin('test_bin_99', key='capacity') is None
+    assert db.get_info_bin('test_bin_99', key='threshold') is None
+
+    assert db.get_info_bin("not_a_bin") is None
+    assert db.get_info_bin('not_a_bin', key='lat') is None
+
+    clean_up()
+
+def test_jsonDB_addSensor():
+    """ Test JSONDB adding a sensor
+    """
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_sensor('test_sensor_1')
+
+    assert db.is_sensor('test_sensor_1')
+    assert not(db.is_sensor('test_sensor_2'))
+
+    db.add_sensor('test_sensor_2', sensor_type='Arduino')
+    assert db.is_sensor('test_sensor_2')
+    assert db.get_info_sensor('test_sensor_2', key='type') == 'Arduino'
+
+    clean_up()
+    
+def test_jsonDB_linkSensor():
+    """ Test that the db can properly link Sensor to DB
+    """
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_bin('test_bin_1')
+    db.add_sensor('test_sensor_1', linked_to='test_bin_1')
+
+    assert db.is_sensor('test_sensor_1')
+    assert db.is_bin('test_bin_1')
+    assert db.is_bin(db.get_info_sensor('test_sensor_1', key='linked_to'))
+
+    clean_up()
