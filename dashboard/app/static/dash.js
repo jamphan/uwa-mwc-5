@@ -27,15 +27,26 @@ function processData(){
     const table = document.getElementById('sensor-table');
     num_bins = bin_ids.length;
     for (var i = 0; i < num_bins; i++){
+        const num = i + 1;
+
         const bin = data["bins"][bin_ids[i]];
+
         const depth = bin["depth"];
         const thresh = bin["threshold"];
+
         const binData = data["data"][bin_ids[i]];
+
         const dataLength = binData["values"].length;
         const lastValue = binData["values"][dataLength-1];
-        const PercentFilled = (depth-lastValue)/(depth-thresh);
-        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td><td>' + PercentFilled+ '</td></tr>');
-        const num = i + 1;
+
+        const percentFilled = (depth-lastValue)/(depth-thresh)*100;
+        var barColor = 'bg-info';
+        if(percentFilled > 60)
+            barColor = 'bg-warning';
+        if(percentFilled > 85)
+            barColor = 'bg-danger';
+        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+num+'</b></td><td><div class="progress"><div class="progress-bar-striped progress-bar ' + barColor +'" role="progressbar" style="width: '+ percentFilled + '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div></td><td>'+percentFilled+'%</td></tr>');
+        
         // add bin marker to google map
         var marker = new google.maps.Marker({
             position: {lat: bin["lat"],lng: bin["long"]},
