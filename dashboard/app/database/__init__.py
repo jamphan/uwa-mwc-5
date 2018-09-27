@@ -44,11 +44,11 @@ class BaseBinDb(object):
         pass
 
     @abc.abstractmethod
-    def get_info_bin(self, bin_id):
+    def get_info_bin(self, bin_id, key=None):
         pass
 
     @abc.abstractmethod
-    def get_info_sensor(self, sensor_id):
+    def get_info_sensor(self, sensor_id, key=None):
         pass
 
     @abc.abstractmethod

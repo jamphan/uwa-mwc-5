@@ -75,8 +75,20 @@ class jsonDb(BaseBinDb):
     def get_data_sensor(self, sensor_id, starting=None, ending=None):
         pass
 
-    def get_info_bin(self, bin_id):
-        pass
+    def get_info_bin(self, bin_id, key=None):
+        """ Returns the bin information
+        """
+
+        if bin_id not in self.data[self._key_bins]:
+            return -1
+        else:
+            if key == None:
+                return self.data[self._key_bins][bin_id]
+            else:
+                if key not in self.data[self._key_bins][bin_id]:
+                    return -1
+                else:
+                    return self.data[self._key_bins][bin_id][key]
 
     def get_info_sensor(self, sensor_id):
         pass
@@ -84,8 +96,6 @@ class jsonDb(BaseBinDb):
     def get_all_bins(self):
 
         return [x for x in self.data[self._key_bins]]
-        
-
-
+    
     def get_all_sensors(self):
         pass

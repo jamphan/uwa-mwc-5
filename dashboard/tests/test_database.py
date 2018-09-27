@@ -53,3 +53,26 @@ def test_getAllBins():
     assert len(all_bins) == 10
     for i in range(10):
         assert 'test_bin_{:d}'.format(i) in all_bins
+
+def test_getBinInfo():
+
+    db = jsonDb(path=TEST_DB_FILE)
+
+    db.add_bin('test_bin_99', position=(10, 20), capacity=100, fill_threshold=13)
+    bin_info = db.get_info_bin('test_bin_99')
+
+    # Add some noise for the test
+    for i in range(10):
+        db.add_bin('test_bin_{:d}'.format(i))
+
+    # Test values are correct
+    assert bin_info['lat'] == 10
+    assert bin_info['long'] == 20
+    assert bin_info['capacity'] == 100
+    assert bin_info['threshold'] == 13
+
+    # Test values are correct (method 2)
+    assert db.get_info_bin('test_bin_99', key='lat') == 10
+    assert db.get_info_bin('test_bin_99', key='long') == 20
+    assert db.get_info_bin('test_bin_99', key='capacity') == 100
+    assert db.get_info_bin('test_bin_99', key='threshold') == 13
