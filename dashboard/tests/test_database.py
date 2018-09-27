@@ -151,6 +151,7 @@ def test_jsonDB_linkSensor():
     clean_up()
 
 def test_jsonDb_addSensorData():
+    """ Basic test for adding data"""
 
     db = jsonDb(path=TEST_DB_FILE)
     db.add_bin('test_bin_1')
@@ -165,5 +166,17 @@ def test_jsonDb_addSensorData():
     db.add_data('test_sensor_1', 20)
     d = db.get_data_bin('test_bin_1')
     assert d['bin_values'] == [10, 20]
+    assert d['recorded_by'][-1] == 'test_sensor_1'
+
+    clean_up()
+
+def test_jsonDb_addDiagnosticData():
+
+    db = jsonDb(path=TEST_DB_FILE)
+    db.add_sensor('test_sensor_1', linked_to='test_bin_1')
+
+    db.add_diagnostics('test_sensor_1', 10)
+    d = db.get_data_sensor('test_sensor_1')
+    assert d['diagnostics'] == [10]
 
     clean_up()

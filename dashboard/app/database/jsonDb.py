@@ -26,6 +26,7 @@ class jsonDb(BaseBinDb):
         self._key_sensors = 'sensors'
         self._key_data = 'data'
         self._key_data_timestamps = 'timestamps'    # Key for recording timestamps
+        self._key_data_recorded_by = 'recorded_by'
 
         self._time_format = time_format
 
@@ -124,6 +125,7 @@ class jsonDb(BaseBinDb):
             _record_obj = dict()
             _record_obj[self._key_data_timestamps] = [timestamp_as_str]
             _record_obj[field] = [value]
+            _record_obj[self._key_data_recorded_by] = [sensor_id]
 
             _data_obj = {self._key_data: {self._key_bins: {linked_bin: _record_obj}}}
 
@@ -132,8 +134,37 @@ class jsonDb(BaseBinDb):
             _existing_record = self.get_data_bin(linked_bin)
             _existing_record[self._key_data_timestamps].append(timestamp_as_str)
             _existing_record[field].append(value)
+            _existing_record[self._key_data_recorded_by].append(sensor_id)
 
             _data_obj = {self._key_data: {self._key_bins: {linked_bin: _existing_record}}}
+
+            self._update(_data_obj)
+
+    def add_diagnostics(self, sensor_id, value, field='diagnostics', timestamp=None):
+
+        if not(self.is_sensor(sensor_id)):
+            return None
+        
+        if timestamp is None:
+            timestamp = datetime.now()
+        
+        timestamp_as_str = timestamp.strftime(self._time_format)
+
+        # If no entries exist for this bin, make the base structure
+        if self.get_data_sensor(sensor_id) is None:
+            _record_obj = dict()
+            _record_obj[self._key_data_timestamps] = [timestamp_as_str]
+            _record_obj[field] = [value]
+
+            _data_obj = {self._key_data: {self._key_sensors: {sensor_id: _record_obj}}}
+
+            self._update(_data_obj)
+        else:
+            _existing_record = self.get_data_sensor(sensor_id)
+            _existing_record[self._key_data_timestamps].append(timestamp_as_str)
+            _existing_record[field].append(value)
+
+            _data_obj = {self._key_data: {self._key_sensors: {sensor_id: _existing_record}}}
 
             self._update(_data_obj)
 
@@ -145,7 +176,11 @@ class jsonDb(BaseBinDb):
             return None
 
     def get_data_sensor(self, sensor_id, starting=None, ending=None):
-        pass
+
+        try:
+            return self.data[self._key_data][self._key_sensors][sensor_id]
+        except KeyError:
+            return None
 
     def get_info_bin(self, bin_id, key=None):
         """ Returns the bin information for a particular bin
