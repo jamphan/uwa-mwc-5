@@ -23,6 +23,8 @@ class jsonDb(BaseBinDb):
             json.dump({}, fd)
             fd.close()
 
+        self._key_bins = 'bins'
+
     def _update(self, update_with):
         data = self.data
 
@@ -59,7 +61,7 @@ class jsonDb(BaseBinDb):
         if fill_threshold is not None:
             bin_obj["threshold"] = fill_threshold
 
-        self._update({"bins": {bin_id: bin_obj}})
+        self._update({self._key_bins: {bin_id: bin_obj}})
     
     def add_sensor(self, sensor_id, sensor_type=None, linked_to=None):
         
@@ -80,7 +82,10 @@ class jsonDb(BaseBinDb):
         pass
 
     def get_all_bins(self):
-        pass
+
+        return [x for x in self.data[self._key_bins]]
+        
+
 
     def get_all_sensors(self):
         pass

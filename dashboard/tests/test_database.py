@@ -38,3 +38,18 @@ def test_ModExistingDb():
     data = db.data
 
     assert 'test_bin_1' in data['bins']
+
+    clean_up()
+
+def test_getAllBins():
+
+    db = jsonDb(path=TEST_DB_FILE)
+    
+    for i in range(10):
+        db.add_bin('test_bin_{:d}'.format(i))
+
+    all_bins = db.get_all_bins()
+    
+    assert len(all_bins) == 10
+    for i in range(10):
+        assert 'test_bin_{:d}'.format(i) in all_bins

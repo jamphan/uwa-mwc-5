@@ -4,12 +4,9 @@ flaskApp = Flask(__name__)
 
 from app import routes
 from app import server
-<<<<<<< HEAD
 #import dash
 #import dash_core_components as dcc
 #import dash_html_components as html
-=======
->>>>>>> 9fc516a002632479b57e2edacef66e5c0e787d9b
 
 flaskApp.config['MQTT_BROKER_URL'] = 'm2m.eclipse.org'
 
