@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
-    console.log(data['bins']);
+    
+    makeSensorTable();
     var marker = new google.maps.Marker({
         position: {lat: -31.9787,lng: 115.8174},
         map: map,
@@ -27,3 +28,15 @@ $(document).ready(function () {
         }
     });
 });
+
+function makeSensorTable(){
+    const table = document.getElementById('sensor-table');
+    console.log(Object.keys(data["bins"]).length);
+    for(var i = 1; i <= Object.keys(data["bins"]).length; i++){
+        const depth = data["bins"]["bin"+ i]["depth"];
+        const thresh = data["bins"]["bin"+ i]["threshold"];
+        const length = data["data"]["bin" + i]["values"].length;
+        const lastValue = data["data"]["bin" + i]["values"][length-1];
+        table.insertAdjacentHTML('beforeend', '<tr><td><b>'+i+'</b></td></tr>');
+    }
+};
