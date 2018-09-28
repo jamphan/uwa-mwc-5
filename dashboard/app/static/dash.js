@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 function processData(){
     const table = document.getElementById('sensor-table');
+    table.innerHTML = "";
     num_bins = bin_ids.length;
     for (var i = 0; i < num_bins; i++){
         const num = i + 1;
