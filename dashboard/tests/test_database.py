@@ -231,9 +231,13 @@ def test_jsonDb_LargeNetwork():
             assert len(expected_data[sens_id]) == 0
         else:
             assert actual['bin_values'] == expected_data[sens_id]
+            assert len(actual['timestamps']) == len(expected_data[sens_id])
 
         actual = db.get_data_sensor(sens_id)
         if actual is None:
             assert len(expected_diag[sens_id]) == 0
         else:
             assert actual['diagnostics'] == expected_diag[sens_id]
+            assert len(actual['timestamps']) == len(expected_diag[sens_id])
+
+        clean_up()

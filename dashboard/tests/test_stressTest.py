@@ -21,7 +21,7 @@ def timing(f):
     return wrap
 
 @timing
-def test_database_stresstest():
+def ignore_test_database_stresstest():
 
     db = jsonDb(path=TEST_DB_FILE)
     db.add_bin('test_bin_1')
