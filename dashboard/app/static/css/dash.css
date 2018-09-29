@@ -7,7 +7,7 @@ button:focus {
     outline:0;
 }
 #map {
-    height: 400px;
+    height: 530px;
   }
 .wrapper {
     display: flex;
@@ -125,6 +125,12 @@ button:focus {
     font-size: 0.7em;
     padding: 1.3em !important;
     border: none;
+}
+.bin-map{
+    min-height: 553px;
+}
+.sensor-list{
+    min-height: 600px;
 }
 .tooltip.bs-tooltip-right .tooltip-inner {
     /* background:white !important;
