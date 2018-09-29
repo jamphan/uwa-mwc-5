@@ -10,5 +10,11 @@ MWC Wireless Sensor Network's documentation!
    :maxdepth: 2
    :caption: Contents
 
-   install
-   systems/Listener
+   quickstart
+
+.. toctree::
+   :maxdepth: 2
+   :caption: System components
+
+   Listener/overview
+   server-database/overview
