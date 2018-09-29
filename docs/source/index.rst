@@ -14,7 +14,13 @@ MWC Wireless Sensor Network's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: System components
+   :caption: Listener
 
    Listener/overview
+   Listener/api
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Server
+
    server-database/overview
