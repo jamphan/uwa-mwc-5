@@ -127,15 +127,15 @@ button:focus {
     border: none;
 }
 .tooltip.bs-tooltip-right .tooltip-inner {
-    background:white !important;
-    color: black;
+    /* background:white !important;
+    color: black; */
     font-size: 0.8em;
 }
 
-.tooltip .arrow:before {
+/* .tooltip .arrow:before {
  border-right-color: white!important;
  border-left-color:white !important;
- }
+ } */
 .table th{
     border-top: 0;
 }
