@@ -1,48 +1,26 @@
 # uwaPySense
 CITS4419 UWA
 
-# Design documentation
-
 See: [gh-pages](https://kjph.github.io/uwa-mwc-5/)
 
-# Usage
+## Contributing to docs
 
-Because this is a package, to run this locally, you will either need to install the pacakge through pip or run from the top-level directory (see [minimal python package structure](https://python-packaging.readthedocs.io/en/latest/minimal.html)).
-
-## Top-level directory
-
-The top-level directory of the package (TLD) is where the `setup.py` file resides. 
-
-``` bash
-  cd /Path/to/repo/uwaPySense/
-  ls
-```
-
-You should see the `setup.py` from the `ls` output in the TLD
-
-From here you can run the package using the `-m` flag for the `python` interpreter
-
-Examples:
+The documentation uses Sphinx (rsT). You will need to install 
+the following packages
 
 ``` bash
 
-  python -m uwaPySense.main     # the main script for the server
-  
-  python -m pytest /tests/      # to run all unit tests with PyTest 
-                                # Note, you may need to remove the db test or setup your own SQL server instance
-  
-  python -m tests.demonstration_bufferOverflow    # example run of a demonstration
+$ python -m pip install sphinx
+$ python -m pip install sphinx-rtd-theme
+
 ```
 
-## Installing with pip
+The source `.rst` files are found in `docs\source`. Edit these acoordingly.
 
-Nb. **the package is still under construction. So there may be issues**
+The docs are then built using
 
 ``` bash
-
-  cd /Path/to/repo/uwaPySense/
-  
-  python -m pip install -e .        # note the -e switch makes a symlink and not a proper install
-                                    # this means when the package is updated, so too will the 'install'
-
+$ python -m sphinx source build -a
 ```
+
+To publish the docs, you will need to move all items in `docs\build` to the `gh-pages` branch
