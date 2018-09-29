@@ -23,7 +23,7 @@ function processData(){
         var percentFilled = (depth-lastValue)/(depth-thresh)*100;
         var barColor = 'bg-info';
         var status = '<td><img class="bin-alert" width="18px" src = "/static/images/check.png"></td';
-        var icon = 'static/images/trash-b.png';
+        var icon = 'static/images/trash.png';
         if(percentFilled < 0 || percentFilled > 100){
             status = '<td><img data-toggle="tooltip" data-placement="right" title="ERROR: Sensor Invalid" class="bin-alert" width="20px" src = "/static/images/wrench.png"></td';
             percentFilled = 0;
