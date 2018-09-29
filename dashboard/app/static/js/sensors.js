@@ -161,7 +161,7 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
     });
     return rchart;
 }
-function refreshLevelGraph(selectList, level_chart){
+function refreshLevelGraph(selectList, level_chart, lchart){
     console.log(selectList);
     allbinData = getLevelData();
     selectbinData = [];
@@ -188,7 +188,7 @@ function refreshLevelGraph(selectList, level_chart){
     if(lchart != undefined){
         lchart.destroy();
     }
-    var lchart = new Chart(level_chart, {
+    lchart = new Chart(level_chart, {
         type: 'line',
         data: {
             datasets: selectbinData,
