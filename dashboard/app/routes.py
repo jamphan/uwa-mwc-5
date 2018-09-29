@@ -48,16 +48,4 @@ def sensors():
     for ids in bin_ids:
         options.append({"text": "Bin "+ re.search(r'\d+', ids).group(), "value": ids})
     
-    # create graph dataset array, time, rssi
-    # dataset = []
-    # for ids in bin_ids:
-        # binDataList = []
-        # binData = db.data["data"][ids]
-        # numReadings = len(binData)
-        # for x in range(numReadings):
-        #     rssi = binData["RSSI_values"][x]
-        #     time = binData["timestamps"][x]
-        #     binDataList.append([rssi, time])
-        # dataset.append(binDataList);
-    # print(dataset)
     return render_template('sensors.html', data=db.data, bin_ids = bin_ids, options = options)
