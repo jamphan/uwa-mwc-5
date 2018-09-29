@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta tags-->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/css/dash.css">
+    <link href="static/fontawesome/css/all.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class = "wrapper">
+    <!-- Sidebar -->
+    <nav class = "shadow-sm" id="sidebar">
+        <div class="sidebar-header">
+            <h6 class = "sidebar-title"><br>UWA SmartBin Network</h6>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="/"><div class = "sidebar-button"><i class="icon fas fa-home"></i><div class = "sidebar-label">Dashboard</div></div></a>
+            </li>
+            <li>
+                <a href="/sensors"><div class = "sidebar-button"><i class="icon fas fa-wifi"></i><div class = "sidebar-label">Sensors</div></div></a>
+            <li>
+                <a href="/datalog"><div class = "sidebar-button"><i class="icon fas fa-database"></i><div class = "sidebar-label">Data Logs</div></div></a>
+            </li>
+            <li class = "active">
+                <a href="/settings"><div class = "sidebar-button"><i class="icon fas fa-cog"></i><div class = "sidebar-label">Settings</div></div></a>
+            </li>
+        </ul>
+
+    </nav>
+    <!-- Page Content -->
+    <div id = "content">
+        <nav class="navbar navbar-expand-lg">
+            <div>
+                <button type="button" id="sidebarCollapse" class = "navbar-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <h6 id = "homeTitle">UWA SmartBin Network | <div class = "index">Settings</div> </h6>
+        </nav>
+      <div class = "container">
+          <div class = "container">
+              <script>                const bin_ids = {{ bin_ids | safe}};
+                </script>
+              <div class="row">
+                  <div class="col-sm-7">
+                    <div class = "shadow-sm card">
+                        <h6 class = "card-title">Add a New Bin</h6>
+                        <form>
+                            <div class="form-group row">
+                                <label for="example-text-input" class="col-3 col-form-label">Bin ID</label>
+                                <div class="col-6">
+                                    <input class="form-control form-control-sm" type="text" placeholder="Choose a new bin ID" id="example-text-input">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                    <label for="example-text-input" class="col-3 col-form-label">Sensor ID</label>
+                                    <div class="col-6">
+                                        <input class="form-control form-control-sm" type="text" placeholder="Choose a new sensor ID" id="example-text-input">
+                                    </div>
+                            </div>
+                            <div class="form-group row">
+                                    <label class="col-3 col-form-label" for="inlineFormCustomSelect">Sensor Type</label>
+                                    <div class="col-6">
+                                            <select class="custom-select" id="inlineFormCustomSelect">
+                                                    <option selected>Lora</option>
+                                                    <option select>Other</option>
+                                        </select>                                        
+                                    </div>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary"">Add New Bin</button>    
+                        </form>
+                    </div>
+                  </div>
+                  <div class="col-sm-5">
+                    <div class = "shadow-sm card">
+                      <h6 class = "card-title">Add Sensor</h6>
+                      
+                    </div>
+                  </div>
+                </div>
+          </div>
+      </div>
+    </div>
+  </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src = "static/js/sidebar.js"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAuLLstMh9g-tZy93dNv0zEXOWHQQ0hWs&callback=initMap" async defer></script> -->
+    
+  </body>
+
+</html>

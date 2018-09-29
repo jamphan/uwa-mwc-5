@@ -25,15 +25,21 @@ $(document).ready(function () {
     });
     var rssi_chart = document.getElementById("rssi-chart").getContext('2d');
     var level_chart = document.getElementById("fill-level-chart").getContext('2d');
-    refreshRSSIGraph($select[0].selectize.getValue(), rssi_chart);
-    refreshLevelGraph($select[0].selectize.getValue(), level_chart);
-
+    var rchart;
+    var lchart;
+    rchart = refreshRSSIGraph($select[0].selectize.getValue(), rssi_chart, rchart);
+    lchart = refreshLevelGraph($select[0].selectize.getValue(), level_chart, lchart);
     $select[0].selectize.on('change', function(value) {
-        refreshRSSIGraph(value, rssi_chart);
-        refreshLevelGraph(value, level_chart);
+        rchart = refreshRSSIGraph(value, rssi_chart, rchart);
+        lchart = refreshLevelGraph(value, level_chart, lchart);
     });
 
 });
+
+function clearChart(id){
+    $('#' + id).empty();
+    $('#' + id).html('<canvas id='+id +'width="50%" height="35%"></canvas>');
+}
 function getBinData(){
     var Color = [
         'rgba(255, 99, 132, 0.6)',
@@ -83,8 +89,8 @@ function getLevelData(){
     }
     return binData;
 }
-function refreshRSSIGraph(selectList, rssi_chart){
-    console.log(selectList);
+
+function refreshRSSIGraph(selectList, rssi_chart, rchart){
     allbinData = getBinData();
     selectbinData = [];
     if(selectList.length == 0){
@@ -106,15 +112,23 @@ function refreshRSSIGraph(selectList, rssi_chart){
             }
         }
     }
-
-    console.log(selectList);
-    var chart = new Chart(rssi_chart, {
+    if(rchart != undefined){
+        rchart.destroy();
+    }
+    rchart = new Chart(rssi_chart, {
         type: 'line',
         data: {
             datasets: selectbinData,
         },
         options: {
-            events: [],
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                       var label = "RSSI";
+                       return label + ' : ' + tooltipItem.yLabel;
+                    }
+                }
+            },
             scales: {
                 xAxes: [
                   {
@@ -145,6 +159,7 @@ function refreshRSSIGraph(selectList, rssi_chart){
             }
         }
     });
+    return rchart;
 }
 function refreshLevelGraph(selectList, level_chart){
     console.log(selectList);
@@ -170,14 +185,23 @@ function refreshLevelGraph(selectList, level_chart){
         }
     }
 
-    console.log(selectList);
-    var chart = new Chart(level_chart, {
+    if(lchart != undefined){
+        lchart.destroy();
+    }
+    var lchart = new Chart(level_chart, {
         type: 'line',
         data: {
             datasets: selectbinData,
         },
         options: {
-            events: [],
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                       var label = "Fill (%)";
+                       return label + ' : ' + tooltipItem.yLabel;
+                    }
+                }
+            },
             scales: {
                 xAxes: [
                   {
@@ -190,7 +214,8 @@ function refreshLevelGraph(selectList, level_chart){
                     time: {
                         displayFormats: {
                             quarter: 'MMM D h:mm a'
-                        }
+                        },
+                        stepSize: 30
                     }
                   }
                 ],
@@ -198,8 +223,9 @@ function refreshLevelGraph(selectList, level_chart){
                     {
                         scaleLabel: {
                             display: true,
-                            labelString: "RSSI",
-                        }, 
+                            labelString: "Fill (%)",
+                        },
+                        min: 0, 
                         ticks: {
                             reverse: false,
                         }
@@ -208,4 +234,5 @@ function refreshLevelGraph(selectList, level_chart){
             }
         }
     });
+    return lchart;
 }

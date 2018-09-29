@@ -1,5 +1,6 @@
 $(document).ready(function () {
     processData();
+    $('[data-toggle="tooltip"]').tooltip()
 });
 
 function processData(){
@@ -23,14 +24,14 @@ function processData(){
         var barColor = 'bg-info';
         var status = '<td><img class="bin-alert" width="18px" src = "/static/images/check.png"></td';;
         if(percentFilled < 0 || percentFilled > 100){
-            status = '<td><img class="bin-alert" width="20px" src = "/static/images/wrench.png"></td';
+            status = '<td><img data-toggle="tooltip" data-placement="right" title="ERROR: Sensor Invalid" class="bin-alert" width="20px" src = "/static/images/wrench.png"></td';
             percentFilled = 0;
         }
         if(percentFilled > 60)
             barColor = 'bg-warning';
         if(percentFilled > 85){
             barColor = 'bg-danger';
-             status = '<td><img class="bin-alert" width="20px" src = "/static/images/exclamation-mark.png"></td';
+             status = '<td><img data-toggle="tooltip" data-placement="right" title="Requires Emptying" class="bin-alert" width="20px" src = "/static/images/exclamation-mark.png"></td';
         }
         table.insertAdjacentHTML('beforeend', '<tr><td><b>'+num+'</b></td><td><div class="progress"><div class="progress-bar-striped progress-bar ' + barColor +'" role="progressbar" style="width: '+ percentFilled + '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div></td><td>'+percentFilled+'%</td>'+status+'</tr>');
         // add bin marker to google map

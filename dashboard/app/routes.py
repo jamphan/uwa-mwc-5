@@ -2,6 +2,7 @@ from app import server
 from flask import render_template
 from app import flaskApp
 from app.database.jsonDb import jsonDb
+import re
 
 @flaskApp.route('/')
 @flaskApp.route('/index')
@@ -30,6 +31,11 @@ def datalog():
     return render_template('datalog.html',  bin_data=binData, bin_ids=bin_ids, 
                                             sensor_ids = sensor_ids, 
                                             sensor_data = sensorData, data = database)
+@flaskApp.route('/settings')
+def settings():
+    db = jsonDb('app/data.json')
+    bin_ids = db.get_all_bins()
+    return render_template('settings.html',  bin_ids = bin_ids)
 
 @flaskApp.route('/sensors')
 def sensors():
@@ -40,7 +46,7 @@ def sensors():
     options = []
     options.append({"text":"All Bins", "value": "All bins"})
     for ids in bin_ids:
-        options.append({"text": "Bin "+ ids[3], "value": ids})
+        options.append({"text": "Bin "+ re.search(r'\d+', ids).group(), "value": ids})
     
     # create graph dataset array, time, rssi
     # dataset = []

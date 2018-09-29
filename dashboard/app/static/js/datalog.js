@@ -15,12 +15,10 @@ $(document).ready(function () {
             var long = bin_data[binID]["lat"];
             var lat = bin_data[binID]["long"];
 
-            console.log(sensor_data[sensorID]["type"]);
             var sensorType = sensor_data[sensorID]["type"];
             table.row.add(
                 [time, binID, sensorID, value, lat, long, RSSI, sensorType]
             ).draw();
-            console.log(data[bin_ids[i]]["timestamps"][j])
         }
     }
 });
