@@ -1,4 +1,4 @@
-DATABASE_PATH = 'app/data.json'
+DATABASE_PATH = 'data.json'
 DATABASE_TYPE = 'json'
 
 # Import the database interfaces
