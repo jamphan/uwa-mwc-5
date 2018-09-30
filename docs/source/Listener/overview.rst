@@ -1,7 +1,7 @@
 .. _listener-overview:
 
-Listener
-========
+Listener overview
+=================
 
 ``Listners`` bridge wireless sensor networks to TCP/IP networks.
 They are responsible for collecting all messages from the motes and publishing them
