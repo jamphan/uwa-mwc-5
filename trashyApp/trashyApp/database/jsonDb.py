@@ -26,6 +26,18 @@ def recursive_dict_update(dst, src):
                 else:
                     dst.update(src)
 
+def add_field_value(target, start_len, value):
+    
+    if target is None:
+        target = []
+
+    while len(target) != start_len:
+        target.append(None)
+
+    target.append(value)
+
+    return target
+
 class jsonDb(BaseBinDb):
     """ This is a JSON implementation of the BaseBinDB base class.
 
@@ -121,7 +133,7 @@ class jsonDb(BaseBinDb):
 
         self._update({self._key_sensors: {sensor_id: sens_obj}})
 
-    def add_data(self, sensor_id, value, field='bin_values', timestamp=None):
+    def add_data(self, sensor_id, value, field='values', timestamp=None):
         
         if not(self.is_sensor(sensor_id)):
             return None
@@ -142,18 +154,30 @@ class jsonDb(BaseBinDb):
             _record_obj[field] = [value]
             _record_obj[self._key_data_recorded_by] = [sensor_id]
 
-            _data_obj = {self._key_data: {self._key_bins: {linked_bin: _record_obj}}}
+            _data_obj = {self._key_data: {linked_bin: _record_obj}}
 
-            self._update(_data_obj)
         else:
             _existing_record = self.get_data_bin(linked_bin)
+
+            # The timestamp key is the only key that is gauranteed to be written
+            # We need to make sure that new fields are padded
+            n_existing_records = len(_existing_record[self._key_data_timestamps])
+
+            _add = {field: value, self._key_data_recorded_by:sensor_id}
+
+            for f, v in _add.items():
+                if (f not in _existing_record):
+                    _existing_record[f] = add_field_value(None, n_existing_records, v)
+                elif (len(_existing_record[f]) < n_existing_records):
+                    _existing_record[f] = add_field_value(_existing_record[f], n_existing_records, v)
+                else:
+                    _existing_record[f].append(v)
+
+            _data_obj = {self._key_data: {linked_bin: _existing_record}}
+
             _existing_record[self._key_data_timestamps].append(timestamp_as_str)
-            _existing_record[field].append(value)
-            _existing_record[self._key_data_recorded_by].append(sensor_id)
 
-            _data_obj = {self._key_data: {self._key_bins: {linked_bin: _existing_record}}}
-
-            self._update(_data_obj)
+        self._update(_data_obj)
 
     def add_diagnostics(self, sensor_id, value, field='diagnostics', timestamp=None):
 
@@ -186,7 +210,7 @@ class jsonDb(BaseBinDb):
     def get_data_bin(self, bin_id, starting=None, ending=None):
         
         try:
-            return self.data[self._key_data][self._key_bins][bin_id]
+            return self.data[self._key_data][bin_id]
         except KeyError:
             return None
 

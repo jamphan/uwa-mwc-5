@@ -58,6 +58,8 @@ def test_getAllBins():
     for i in range(10):
         assert 'test_bin_{:d}'.format(i) in all_bins
 
+    clean_up()
+
 def test_getBinInfo():
 
     db = jsonDb(path=TEST_DB_FILE)
@@ -162,12 +164,12 @@ def test_jsonDb_addSensorData():
     db.add_data('test_sensor_1', 10)
 
     d = db.get_data_bin('test_bin_1')
-    assert d['bin_values'] == [10]
+    assert d['values'] == [10]
 
     time.sleep(1)
     db.add_data('test_sensor_1', 20)
     d = db.get_data_bin('test_bin_1')
-    assert d['bin_values'] == [10, 20]
+    assert d['values'] == [10, 20]
     assert d['recorded_by'][-1] == 'test_sensor_1'
 
     clean_up()
@@ -230,7 +232,7 @@ def test_jsonDb_LargeNetwork():
         if actual is None:
             assert len(expected_data[sens_id]) == 0
         else:
-            assert actual['bin_values'] == expected_data[sens_id]
+            assert actual['values'] == expected_data[sens_id]
             assert len(actual['timestamps']) == len(expected_data[sens_id])
 
         actual = db.get_data_sensor(sens_id)

@@ -42,65 +42,70 @@ def mqtt_app(flask_app):
 
     return mqtt
 
+def main():
 
-flaskApp = create_app()
-mqttApp = mqtt_app(flaskApp)
+    flaskApp = create_app()
+    mqttApp = mqtt_app(flaskApp)
 
-@mqttApp.on_message()
-def _(client, userdat, message):
+    @mqttApp.on_message()
+    def _(client, userdat, message):
 
-    data = dict(
-        topic=message.topic,
-        payload=message.payload.decode()
-    )
+        data = dict(
+            topic=message.topic,
+            payload=message.payload.decode()
+        )
 
-    print(message.payload.decode())
-    db = get_db()
-    db.add_data('Lora1', 1, field="values")
+        print(message.payload.decode())
 
-@flaskApp.route('/')
-def index():
+        with flaskApp.app_context():
+            try:
+                db = get_db()
+                db.add_data('Lora1', 1, field="values")
+            except Exception as e:
+                print(e)
 
-    db = get_db()
-    bin_ids = db.get_all_bins()
-    print(bin_ids)
-    data = db.data
+    @flaskApp.route('/')
+    def index():
 
-    return render_template('home.html', data=data, bin_ids = bin_ids)
+        db = get_db()
+        bin_ids = db.get_all_bins()
+        print(bin_ids)
+        data = db.data
 
-@flaskApp.route('/datalog')
-def datalog():
-    db = get_db()
+        return render_template('home.html', data=data, bin_ids = bin_ids)
 
-    bin_ids = db.get_all_bins()
-    sensor_ids = db.get_all_sensors()
+    @flaskApp.route('/datalog')
+    def datalog():
+        db = get_db()
 
-    sensorData = db.data["sensors"];
-    binData = db.data["bins"];
+        bin_ids = db.get_all_bins()
+        sensor_ids = db.get_all_sensors()
 
-    database = db.data["data"]
+        sensorData = db.data["sensors"];
+        binData = db.data["bins"];
 
-    return render_template('datalog.html',  bin_data=binData, bin_ids=bin_ids, 
-                                            sensor_ids = sensor_ids, 
-                                            sensor_data = sensorData, data = database)
-@flaskApp.route('/settings')
-def settings():
-    db = get_db()
-    bin_ids = db.get_all_bins()
-    return render_template('settings.html',  bin_ids = bin_ids)
+        database = db.data["data"]
 
-@flaskApp.route('/sensors')
-def sensors():
-    db = get_db()
-    bin_ids = db.get_all_bins()
+        return render_template('datalog.html',  bin_data=binData, bin_ids=bin_ids, 
+                                                sensor_ids = sensor_ids, 
+                                                sensor_data = sensorData, data = database)
+    @flaskApp.route('/settings')
+    def settings():
+        db = get_db()
+        bin_ids = db.get_all_bins()
+        return render_template('settings.html',  bin_ids = bin_ids)
 
-    # create bin id array
-    options = []
-    options.append({"text":"All Bins", "value": "All bins"})
-    for ids in bin_ids:
-        options.append({"text": "Bin "+ re.search(r'\d+', ids).group(), "value": ids})
-    
-    return render_template('sensors.html', data=db.data, bin_ids = bin_ids, options = options)
+    @flaskApp.route('/sensors')
+    def sensors():
+        db = get_db()
+        bin_ids = db.get_all_bins()
 
-if __name__ == '__main__':
+        # create bin id array
+        options = []
+        options.append({"text":"All Bins", "value": "All bins"})
+        for ids in bin_ids:
+            options.append({"text": "Bin "+ re.search(r'\d+', ids).group(), "value": ids})
+        
+        return render_template('sensors.html', data=db.data, bin_ids = bin_ids, options = options)
+
     flaskApp.run(host='127.0.0.1', port=5000, debug=True)
