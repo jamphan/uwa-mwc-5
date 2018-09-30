@@ -57,6 +57,27 @@
                 const options = {{ options | safe}};
                 const data = {{ data | tojson | safe}};
               </script>
+                    <div class = "shadow-sm card">
+                    <div class="row">
+                      <div class="col-sm">
+                            <div class="form-group row">
+                                    <label for="example-text-input" class="col-3 col-form-label">Start Date</label>
+                                    <div class="col-6">
+                                        <input class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
+                                    </div>
+                            </div>
+                      </div>
+                      <div class="col-sm">
+                            <div class="form-group row">
+                                    <label for="example-text-input" class="col-3 col-form-label">End Date</label>
+                                        <div class="col-6">
+                                            <input class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
+                                        </div>
+                                </div>
+                      </div>
+                    </div>
+                  </div>
+                <br>
               <input type="text" id="input-tags"/>
               <br>
                 <div class="row">
@@ -67,18 +88,15 @@
                     </div>
                     </div>
                     <div class = "col-sm-6 ">
-                    <div class = "shadow-sm card">
-                      <h6 class = "card-title">Waste Fill Level</h6>
-                      <canvas id="fill-level-chart" width="50%" height="35%"></canvas>
+                        <div class = "shadow-sm card">
+                            <h6 class = "card-title">Waste Fill Level</h6>
+                            <canvas id="fill-level-chart" width="50%" height="35%"></canvas>
+                        </div>
                     </div>
-                    </div>
-                    </div>
-                  </div>
                 </div>
-          </div>
-      </div>
+                    
+        </div>
     </div>
-  </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
