@@ -10,6 +10,7 @@
     <link href="static/fontawesome/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css" integrity="sha256-PaAZL3VjvuBsQSngzjA8dTdYa2mU88xmjd0vw8biXfg=" crossorigin="anonymous">
     <link rel="stylesheet" href="static/css/dash.css">
+    <link rel="stylesheet" href="https://unpkg.com/js-datepicker/datepicker.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.0.8/es5-shim.min.js"></script><![endif]-->
 
@@ -63,7 +64,7 @@
                             <div class="form-group row">
                                     <label for="example-text-input" class="col-3 col-form-label">Start Date</label>
                                     <div class="col-6">
-                                        <input class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
+                                        <input id="start-date" class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
                                     </div>
                             </div>
                       </div>
@@ -71,7 +72,7 @@
                             <div class="form-group row">
                                     <label for="example-text-input" class="col-3 col-form-label">End Date</label>
                                         <div class="col-6">
-                                            <input class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
+                                            <input id="end-date" class="form-control form-control-sm" type="text" placeholder="Enter date" id="example-text-input">
                                         </div>
                                 </div>
                       </div>
@@ -104,6 +105,7 @@
     <script src = "static/js/sensors.js"></script>   
     <script src = "static/js/sidebar.js"></script>
     <script src = "static/moment/moment.js"></script>
+    <script src="https://unpkg.com/js-datepicker"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.3/sifter.min.js" integrity="sha256-mxM39LWfy+5SpRaErGX16VP6M+saQp36JyvQvkWZk3k=" crossorigin="anonymous"></script>

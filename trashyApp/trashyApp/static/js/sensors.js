@@ -1,5 +1,8 @@
 $(document).ready(function () {    
 
+    const startpicker = datepicker('#start-date');
+    const endpicker = datepicker('#end-date');
+
     var $select = $('#input-tags').selectize({
         delimiter: ',',
         create: false,
@@ -60,6 +63,12 @@ function getBinData(){
         for(var j = 0; j < data["data"][bin_label]["timestamps"].length; j++){
             var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
             var rssi = data["data"][bin_label]["RSSI_values"][j];
+            var start_date = document.getElementById("start-date").value;
+            var end_date = document.getElementById("end-date").value;
+            if(start_date != "" && end_date != ""){
+                start_date = moment(start_date, 'ddd MMM d YYYY').toDate();
+                end_date = moment(end_date, 'ddd MMM d YYYY').toDate();
+            }
             dataset.push({x: date, y: rssi});
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: false});
