@@ -58,7 +58,9 @@ function getBinData(){
         bin_label = bin_ids[i];
         dataset = [];
         for(var j = 0; j < data["data"][bin_label]["timestamps"].length; j++){
-            dataset.push({x: new Date(data["data"][bin_label]["timestamps"][j]), y: data["data"][bin_label]["RSSI_values"][j]});
+            var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
+            var rssi = data["data"][bin_label]["RSSI_values"][j];
+            dataset.push({x: date, y: rssi});
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: false});
     }
@@ -86,7 +88,8 @@ function getLevelData(){
             const value = data["data"][bin_label]["values"][j];
             const thresh = data["bins"][bin_label]["threshold"];
             var percentFilled = (depth-value)/(depth-thresh)*100;
-            dataset.push({x: new Date(data["data"][bin_label]["timestamps"][j]), y: percentFilled});
+            var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
+            dataset.push({x: date, y: percentFilled});
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: true});
     }
