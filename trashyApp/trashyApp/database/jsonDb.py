@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 
-from trashyApp.database import BaseBinDb
+from . import BaseBinDb
 
 def recursive_dict_update(dst, src):
     """ Update dst (dict) with src (dict). 

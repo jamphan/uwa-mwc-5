@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-from trashyApp.database import BaseBinDb
+from . import BaseBinDb
 
 class SQLite3Db(BaseBinDb):
 

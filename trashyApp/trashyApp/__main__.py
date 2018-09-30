@@ -1,5 +1,5 @@
-import trashyApp
+from trashyApp import main
 
 if __name__ == '__main__':
 
-    trashyApp.main()
+    main()
