@@ -23,6 +23,9 @@ button:focus {
     margin-bottom: 30px;
 
 }
+.form-group{
+    margin: 0px;
+}
 #sidebar.active {
     max-width: 60px;
     min-width: 60px;
