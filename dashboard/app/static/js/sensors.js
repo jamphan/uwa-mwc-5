@@ -1,4 +1,5 @@
 $(document).ready(function () {    
+
     var $select = $('#input-tags').selectize({
         delimiter: ',',
         create: false,
@@ -27,6 +28,7 @@ $(document).ready(function () {
     var level_chart = document.getElementById("fill-level-chart").getContext('2d');
     var rchart;
     var lchart;
+
     rchart = refreshRSSIGraph($select[0].selectize.getValue(), rssi_chart, rchart);
     lchart = refreshLevelGraph($select[0].selectize.getValue(), level_chart, lchart);
     $select[0].selectize.on('change', function(value) {
@@ -56,10 +58,13 @@ function getBinData(){
         bin_label = bin_ids[i];
         dataset = [];
         for(var j = 0; j < data["data"][bin_label]["timestamps"].length; j++){
-            dataset.push({x: new Date(data["data"][bin_label]["timestamps"][j]), y: data["data"][bin_label]["RSSI_values"][j]});
+            var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
+            var rssi = data["data"][bin_label]["RSSI_values"][j];
+            dataset.push({x: date, y: rssi});
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: false});
     }
+
     return binData;
 }
 
@@ -83,7 +88,8 @@ function getLevelData(){
             const value = data["data"][bin_label]["values"][j];
             const thresh = data["bins"][bin_label]["threshold"];
             var percentFilled = (depth-value)/(depth-thresh)*100;
-            dataset.push({x: new Date(data["data"][bin_label]["timestamps"][j]), y: percentFilled});
+            var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
+            dataset.push({x: date, y: percentFilled});
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: true});
     }
@@ -92,7 +98,7 @@ function getLevelData(){
 
 function refreshRSSIGraph(selectList, rssi_chart, rchart){
     allbinData = getBinData();
-    selectbinData = [];
+    var selectbinData = [];
     if(selectList.length == 0){
         console.log("none selected");
         selectbinData = allbinData;
@@ -112,6 +118,7 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
             }
         }
     }
+    console.log(selectbinData);
     if(rchart != undefined){
         rchart.destroy();
     }
