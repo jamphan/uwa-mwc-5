@@ -2,7 +2,7 @@ import pytest
 import time
 import os
 
-from app.database.jsonDb import jsonDb
+from trashyApp.database.jsonDb import jsonDb
 
 TEST_DB_FILE = 'test.json'
 

@@ -1,6 +1,6 @@
 import pytest
 
-from app.database.sqliteDb import SQLite3Db
+from trashyApp.database.sqliteDb import SQLite3Db
 
 def test_sqlite3_basic():
     

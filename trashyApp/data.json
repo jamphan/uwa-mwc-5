@@ -74,44 +74,44 @@
     "sensors":{
         "Lora1": {
             "type": "Arduino",
-            "bin_number": 1
+            "bin_number": "bin1"
         },
         "Lora2": {
             "type": "Arduino",
-            "bin_number": 2
+            "bin_number": "bin2"
         },
         "Lora3": {
             "type": "Arduino",
-            "bin_number": 3
+            "bin_number": "bin3"
         },
         "Lora4": {
             "type": "Arduino",
-            "bin_number": 4
+            "bin_number": "bin4"
         },
         "Lora5": {
             "type": "Arduino",
-            "bin_number": 5
+            "bin_number": "bin5"
         },
         "Lora6": {
             "type": "Arduino",
-            "bin_number": 6
+            "bin_number": "bin6"
         },
         "Lora7": {
             "type": "Arduino",
-            "bin_number": 7
+            "bin_number": "bin7"
         },
         "Lora8": {
             "type": "Arduino",
-            "bin_number": 8
+            "bin_number": "bin8"
         }
         ,
         "Lora9": {
             "type": "Arduino",
-            "bin_number": 9
+            "bin_number": "bin9"
         },
         "Lora10": {
             "type": "Arduino",
-            "bin_number": 10
+            "bin_number": "bin10"
         }
     },
     "data":{

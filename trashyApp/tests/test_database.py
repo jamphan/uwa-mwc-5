@@ -5,7 +5,7 @@ import time
 import random
 import collections
 
-from app.database.jsonDb import jsonDb
+from trashyApp.database.jsonDb import jsonDb
 
 TEST_DB_FILE = 'test.json'
 
@@ -148,7 +148,7 @@ def test_jsonDB_linkSensor():
 
     assert db.is_sensor('test_sensor_1')
     assert db.is_bin('test_bin_1')
-    assert db.is_bin(db.get_info_sensor('test_sensor_1', key='linked_to'))
+    assert db.is_bin(db.get_info_sensor('test_sensor_1', key='bin_number'))
 
     clean_up()
 
@@ -240,4 +240,4 @@ def test_jsonDb_LargeNetwork():
             assert actual['diagnostics'] == expected_diag[sens_id]
             assert len(actual['timestamps']) == len(expected_diag[sens_id])
 
-        clean_up()
+    clean_up()

@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 
-from app.database import BaseBinDb
+from trashyApp.database import BaseBinDb
 
 def recursive_dict_update(dst, src):
     """ Update dst (dict) with src (dict). 
@@ -41,6 +41,7 @@ class jsonDb(BaseBinDb):
         self._key_data = 'data'
         self._key_data_timestamps = 'timestamps'    # Key for recording timestamps
         self._key_data_recorded_by = 'recorded_by'
+        self._key_linked_to = 'bin_number'
 
         self._time_format = time_format
 
@@ -114,9 +115,9 @@ class jsonDb(BaseBinDb):
         sens_obj["type"] = sensor_type
 
         if self.is_bin(linked_to):
-            sens_obj["linked_to"] = linked_to
+            sens_obj[self._key_linked_to ] = linked_to
         else:
-            sens_obj["linked_to"] = None
+            sens_obj[self._key_linked_to ] = None
 
         self._update({self._key_sensors: {sensor_id: sens_obj}})
 
@@ -125,7 +126,7 @@ class jsonDb(BaseBinDb):
         if not(self.is_sensor(sensor_id)):
             return None
         
-        linked_bin = self.get_info_sensor(sensor_id, key='linked_to')
+        linked_bin = self.get_info_sensor(sensor_id, key=self._key_linked_to)
         if linked_bin is None:
             return None
 

@@ -3,7 +3,10 @@ import re
 from flask import Flask, render_template
 from flask_mqtt import Mqtt
 
-from app.database import get_db
+MQTT_BROKER = "m2m.eclipse.org"
+MQTT_TOPIC = "UWA/CITS/DATA"
+
+from .database import get_db
 
 def create_app(test_config=None):
     # create and configure the app
@@ -11,7 +14,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'data.json'),
-        MQTT_BROKER_URL = 'm2m.eclipse.org'
+        MQTT_BROKER_URL = MQTT_BROKER
     )
 
     if test_config is None:
@@ -27,9 +30,33 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+
     return app
 
+def mqtt_app(flask_app):
+
+    mqtt = Mqtt()
+    mqtt.init_app(flask_app)
+
+    mqtt.subscribe(MQTT_TOPIC)
+
+    return mqtt
+
+
 flaskApp = create_app()
+mqttApp = mqtt_app(flaskApp)
+
+@mqttApp.on_message()
+def _(client, userdat, message):
+
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode()
+    )
+
+    print(message.payload.decode())
+    db = get_db()
+    db.add_data('Lora1', 1, field="values")
 
 @flaskApp.route('/')
 def index():
@@ -76,4 +103,4 @@ def sensors():
     return render_template('sensors.html', data=db.data, bin_ids = bin_ids, options = options)
 
 if __name__ == '__main__':
-	flaskApp.run_server(debug=True)
+    flaskApp.run(host='127.0.0.1', port=5000, debug=True)
