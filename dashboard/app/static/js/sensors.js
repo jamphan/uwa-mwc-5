@@ -1,4 +1,5 @@
 $(document).ready(function () {    
+
     var $select = $('#input-tags').selectize({
         delimiter: ',',
         create: false,
@@ -27,6 +28,7 @@ $(document).ready(function () {
     var level_chart = document.getElementById("fill-level-chart").getContext('2d');
     var rchart;
     var lchart;
+
     rchart = refreshRSSIGraph($select[0].selectize.getValue(), rssi_chart, rchart);
     lchart = refreshLevelGraph($select[0].selectize.getValue(), level_chart, lchart);
     $select[0].selectize.on('change', function(value) {
@@ -60,6 +62,7 @@ function getBinData(){
         }
         binData.push({label: bin_label, data: dataset, backgroundColor: Color[i], borderColor: Color[i], fill: false});
     }
+
     return binData;
 }
 
@@ -92,7 +95,7 @@ function getLevelData(){
 
 function refreshRSSIGraph(selectList, rssi_chart, rchart){
     allbinData = getBinData();
-    selectbinData = [];
+    var selectbinData = [];
     if(selectList.length == 0){
         console.log("none selected");
         selectbinData = allbinData;
@@ -112,6 +115,7 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
             }
         }
     }
+    console.log(selectbinData);
     if(rchart != undefined){
         rchart.destroy();
     }
