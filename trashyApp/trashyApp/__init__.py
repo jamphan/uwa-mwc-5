@@ -56,11 +56,16 @@ def main():
         )
 
         print(message.payload.decode())
+        incoming = message.payload.decode()
+        parts = incoming.split(',')
+
+        sensor_id = parts[0]
+        bin_val = float(parts[1])
 
         with flaskApp.app_context():
             try:
                 db = get_db()
-                db.add_data('Lora1', 1, field="values")
+                db.add_data(sensor_id, bin_val, field="values")
             except Exception as e:
                 print(e)
 

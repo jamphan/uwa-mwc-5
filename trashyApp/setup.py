@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 setup(
-    name='trashApp',
+    name='trashyApp',
     packages=[],
     version='0.0.1',
     description='Bin app dashboard',
