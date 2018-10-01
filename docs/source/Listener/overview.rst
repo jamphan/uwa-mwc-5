@@ -12,12 +12,13 @@ The ``Listener`` connects to a mote through serial.
 Quickstart
 ----------
 
-To install, you need to navigate to the package directory. The package directory
-is such that when you list-directory with ``ls`` you can see a ``setup.py`` file
+Navigate to the TLD. You will need to install the ``uwaPySense`` package using pip
 
 .. code-block:: bash
 
-    $ python -m pip install -e .
+   $ cd /path/to/Repo/                      # TLD
+   $ python -m pip install -r ./uwaPySense/requirements.txt
+   $ python -m pip install -e ./uwaPySense/
 
 Because the package is currently under a proof-of-concept stage, and that it is
 not published (yet) we recommend installing with the ``-e`` switch.
