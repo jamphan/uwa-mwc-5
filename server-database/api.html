@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Web Application" href="../web-application/overview.html" />
+    <link rel="prev" title="Server database" href="overview.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -86,8 +88,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../Listener/api.html">Documentation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Server</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Server database</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basebindb">BaseBinDb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jsondb">JsonDb</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Web-application</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../web-application/overview.html">Web Application</a></li>
 </ul>
 
             
@@ -159,11 +170,11 @@
 <p>This is an abstract base class that all implementations should
 derive from</p>
 <dl class="class">
-<dt id="app.database.BaseBinDb">
-<em class="property">class </em><code class="descclassname">app.database.</code><code class="descname">BaseBinDb</code><a class="headerlink" href="#app.database.BaseBinDb" title="Permalink to this definition">¶</a></dt>
+<dt id="trashyApp.database.BaseBinDb">
+<em class="property">class </em><code class="descclassname">trashyApp.database.</code><code class="descname">BaseBinDb</code><a class="headerlink" href="#trashyApp.database.BaseBinDb" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
-<dt id="app.database.BaseBinDb.add_bin">
-<code class="descname">add_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>position=None</em>, <em>capacity=None</em>, <em>fill_threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#app.database.BaseBinDb.add_bin" title="Permalink to this definition">¶</a></dt>
+<dt id="trashyApp.database.BaseBinDb.add_bin">
+<code class="descname">add_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>position=None</em>, <em>capacity=None</em>, <em>fill_threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.BaseBinDb.add_bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a bin to the database</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -184,14 +195,14 @@ threshold is automatically set to the capacity</li>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="app.database.BaseBinDb.data">
-<code class="descname">data</code><a class="headerlink" href="#app.database.BaseBinDb.data" title="Permalink to this definition">¶</a></dt>
+<dt id="trashyApp.database.BaseBinDb.data">
+<code class="descname">data</code><a class="headerlink" href="#trashyApp.database.BaseBinDb.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the data stored in the database</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="app.database.BaseBinDb.get_info_bin">
-<code class="descname">get_info_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#app.database.BaseBinDb.get_info_bin" title="Permalink to this definition">¶</a></dt>
+<dt id="trashyApp.database.BaseBinDb.get_info_bin">
+<code class="descname">get_info_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.BaseBinDb.get_info_bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the bin information for a particular bin</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -230,6 +241,291 @@ float: If key is not none and there are no key errors</p>
 </dd></dl>
 
 </div>
+<div class="section" id="jsondb">
+<h2>JsonDb<a class="headerlink" href="#jsondb" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="trashyApp.database.jsonDb">
+<em class="property">class </em><code class="descclassname">trashyApp.database.</code><code class="descname">jsonDb</code><span class="sig-paren">(</span><em>path='database.json'</em>, <em>time_format='%Y-%m-%d %H:%M:%S'</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a JSON implementation of the BaseBinDB base class.
+See app.database.BaseBinDb (in __init__.py) for public API information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) – the path to store/open the database</li>
+<li><strong>time_format</strong> (<em>str</em>) – the date-time format to use/parse</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="trashyApp.database.jsonDb._base_structure">
+<code class="descname">_base_structure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb._base_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup the JSON schema</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb._update">
+<code class="descname">_update</code><span class="sig-paren">(</span><em>update_with</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb._update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the json data. This is a hacked version of a the .update
+method for dictionaries. In particular, we cannot replace existing
+keys (that have dict values) with a new dict; we need to recursively
+go through the nested dictionaries and update all the keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update_with</strong> (<em>dict</em>) – The dictionary to update the database with</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.add_bin">
+<code class="descname">add_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>position=None</em>, <em>capacity=None</em>, <em>fill_threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.add_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a bin to the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>bin_id</strong> (<em>str</em>) – The bin identifier</li>
+<li><strong>position</strong> (<em>tuple</em><em>, </em><em>default=None</em>) – The (lat, lon) coordinates of the bin</li>
+<li><strong>capacity</strong> (<em>float</em>) – The maximum capacity of the bin</li>
+<li><strong>fill_threshold</strong> (<em>float</em>) – The level before the bin is considered full</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.add_data">
+<code class="descname">add_data</code><span class="sig-paren">(</span><em>sensor_id</em>, <em>value</em>, <em>field='values'</em>, <em>timestamp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add data against a sensor_id (and its linked bin)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sensor_id</strong> (<em>str</em>) – The sensor to record dat against</li>
+<li><strong>value</strong> (<em>float</em>) – The value to record</li>
+<li><strong>field</strong> (<em>str</em><em>, </em><em>default='values'</em>) – The key to use to stored values</li>
+<li><strong>timestamp</strong> (<em>datetime</em><em>, </em><em>default=None</em>) – The time to record against. If
+None then the database will use the time the method was called.
+If timestamp is -1 then no timestamp will be added to the existing
+data, this allows the system to record multiple data fields against
+one timestamp</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True on success</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.add_sensor">
+<code class="descname">add_sensor</code><span class="sig-paren">(</span><em>sensor_id</em>, <em>sensor_type=None</em>, <em>linked_to=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.add_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sensor to the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sensor_id</strong> (<em>str</em>) – The unique sensor identifier</li>
+<li><strong>sensor_type</strong> (<em>str</em><em>, </em><em>default=None</em>) – A categorisation of sensors</li>
+<li><strong>linked_to</strong> (<em>str</em>) – The bin that the sensor is linked to. Must be
+an existing bin_id, otherwise it will fail over to ‘Null’</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="trashyApp.database.jsonDb.data">
+<code class="descname">data</code><a class="headerlink" href="#trashyApp.database.jsonDb.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the raw JSON data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_all_bins">
+<code class="descname">get_all_bins</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_all_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all unique bin ids in database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">of strings of bin ids</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_all_sensors">
+<code class="descname">get_all_sensors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_all_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all unique sensor ids in database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">of strings of sensor ids</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_data_bin">
+<code class="descname">get_data_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>starting=None</em>, <em>ending=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_data_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all data related to a bin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bin_id</strong> – The bin to get information for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>The data against the bin. The keys are the fields specified</dt>
+<dd>during add_data.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_data_sensor">
+<code class="descname">get_data_sensor</code><span class="sig-paren">(</span><em>sensor_id</em>, <em>starting=None</em>, <em>ending=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_data_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all data related to a sensor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sensor_id</strong> – The sensor to get information for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>The data against the sensor. The keys are the fields specified</dt>
+<dd>during add_data.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_info_bin">
+<code class="descname">get_info_bin</code><span class="sig-paren">(</span><em>bin_id</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_info_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the bin information for a particular bin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bin_id</strong> (<em>str</em>) – the bin to get information for</li>
+<li><strong>key</strong> (<em>str</em><em>, </em><em>default=None</em>) – Get a specific field, when None then
+returns entire dictionary</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">all information is stored in the dict
+float: if key is not None and key exist in data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.get_info_sensor">
+<code class="descname">get_info_sensor</code><span class="sig-paren">(</span><em>sensor_id</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.get_info_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sensor information for a particular sensor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sensor_id</strong> (<em>str</em>) – the sensor to get information for</li>
+<li><strong>key</strong> (<em>str</em><em>, </em><em>default=None</em>) – Get a specific field, when None then
+returns entire dictionary</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">all information is stored in the dict
+float: if key is not None and key exist in data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.is_bin">
+<code class="descname">is_bin</code><span class="sig-paren">(</span><em>test_id</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.is_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the test_id is a valid bin in the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>test_id</strong> (<em>str</em>) – identifier to check</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns</dt>
+<dd>bool: True on success</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="trashyApp.database.jsonDb.is_sensor">
+<code class="descname">is_sensor</code><span class="sig-paren">(</span><em>test_id</em><span class="sig-paren">)</span><a class="headerlink" href="#trashyApp.database.jsonDb.is_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the test_id is a valid sensor in the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>test_id</strong> (<em>str</em>) – identifier to check</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns</dt>
+<dd>True: If is valid, false otherwise</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -237,6 +533,15 @@ float: If key is not none and there are no key errors</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../web-application/overview.html" class="btn btn-neutral float-right" title="Web Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="Server database" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

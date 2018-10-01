@@ -95,6 +95,11 @@
 <p class="caption"><span class="caption-text">Server</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../server-database/overview.html">Server database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../server-database/api.html">Documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Web-application</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../web-application/overview.html">Web Application</a></li>
 </ul>
 
             
@@ -169,6 +174,21 @@
 <dd><p>A thread which has flags to determine whether or not it should
 abruptly be stopped or not. All objects that are derived from this class
 will be stopped when the stop() routine is called by any thread</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rest</strong> (<em>float</em>) – This numeric should be used in the main run() loop as
+a specified time for the thread to ‘rest’ every iteration</li>
+<li><strong>event</strong> (<em>threading.Event</em>) – An event, which when set will stop the
+thread. This parameter is a kwarg as some applications may require
+a global stop event, or conversely may want independent threads</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="uwaPySense.listenerutils.StoppableThread.isStopped">
 <code class="descname">isStopped</code><a class="headerlink" href="#uwaPySense.listenerutils.StoppableThread.isStopped" title="Permalink to this definition">¶</a></dt>
@@ -178,22 +198,6 @@ will be stopped when the stop() routine is called by any thread</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="uwaPySense.listenerutils.StoppableThread._rest">
-<code class="descname">_rest</code><a class="headerlink" href="#uwaPySense.listenerutils.StoppableThread._rest" title="Permalink to this definition">¶</a></dt>
-<dd><p>This numeric should be used in the main run() loop as
-a specified time for the thread to ‘rest’ every
-iteration</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">float</td>
 </tr>
 </tbody>
 </table>
@@ -225,6 +229,14 @@ several iterations in the main loop (that is indefinite…)</p>
 <dd><p>This routine will stop all threads of class StoppableThread
 as all classes that are listening to the threading event ._stop_event
 will be set on stop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SystemError</span></code> – On fail due to .clean_up() method</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -236,42 +248,30 @@ will be set on stop.</p>
 <dt id="uwaPySense.Listener">
 <em class="property">class </em><code class="descclassname">uwaPySense.</code><code class="descname">Listener</code><span class="sig-paren">(</span><em>serialPort</em>, <em>message_prototype</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#uwaPySense.Listener" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Listener is only responsible for listening to messages on the serial
-line and storing them to queue.</p>
+line and storing them to queue. This ensures that the serial TX buffer never
+overflows, or there are no issues with the data stream from the less power-
+-ful device whilst the main thread is busy performing more complex operations
+(such as pushing information to the network)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>serialPort</strong> – An open serial port object with read and write methods</li>
-<li><strong>message_prototype</strong> – This is the class prototype for the message structure to use. This
-must be of type uwaPySense.messages.Msg</li>
+<li><strong>serialPort</strong> (<em>serial.serial</em>) – An open serial port object with read and
+write methods</li>
+<li><strong>message_prototype</strong> (<em>uwaPySense.messages.Msg</em>) – This is the class prototype
+for the message structure to use.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="uwaPySense.Listener._serial">
-<code class="descname">_serial</code><a class="headerlink" href="#uwaPySense.Listener._serial" title="Permalink to this definition">¶</a></dt>
-<dd><p>The open serial port the object is instantiated
-with</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">serial.serial</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="uwaPySense.Listener._queue">
 <code class="descname">_queue</code><a class="headerlink" href="#uwaPySense.Listener._queue" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a shared memory space between this object
-and the child Worker object. This is the
-primary method of communication between the
-threads.</p>
+and the child Worker object. This is the primary method of
+communication between the threads.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -309,6 +309,14 @@ and processing operations</p>
 <dd><p>The main loop for the Listener thread. Note this overrides the
 threading.Thread method, and hence will be called upon .start()
 of this thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SystemError</span></code> – if there is no Worker assigned to the thread</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -316,6 +324,22 @@ of this thread.</p>
 <code class="descname">set_worker</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#uwaPySense.Listener.set_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the worker for the listener. This must be set prior to starting
 the Listener thread</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>w</strong> (<a class="reference internal" href="#uwaPySense.Worker" title="uwaPySense.Worker"><em>uwaPySense.Worker</em></a>) – The worker that will perform the complex
+operations for the Listener</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">On success</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">True</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – When the arg passes is not of type
+uwaPySense.listenerutils.StoppableThread</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -326,19 +350,18 @@ the Listener thread</p>
 <dl class="class">
 <dt id="uwaPySense.Worker">
 <em class="property">class </em><code class="descclassname">uwaPySense.</code><code class="descname">Worker</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#uwaPySense.Worker" title="Permalink to this definition">¶</a></dt>
-<dd><p>The worker must write the messages from queue into the database.</p>
+<dd><p>Responsible for acting on messages recieved by the Listener</p>
 <dl class="attribute">
-<dt id="uwaPySense.Worker._queue">
-<code class="descname">_queue</code><a class="headerlink" href="#uwaPySense.Worker._queue" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a shared memory space between the parent
-Listener instance and this instance. This is the
-primary method of communication between the
-threads</p>
+<dt id="uwaPySense.Worker._registrar">
+<code class="descname">_registrar</code><a class="headerlink" href="#uwaPySense.Worker._registrar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of functions that the worker is to
+perform on the queue items. If this list blank, the messages
+are are taken out of queue and ultimately lost.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">queue.Queue</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -347,7 +370,19 @@ threads</p>
 <dl class="method">
 <dt id="uwaPySense.Worker.assign_to">
 <code class="descname">assign_to</code><span class="sig-paren">(</span><em>q</em><span class="sig-paren">)</span><a class="headerlink" href="#uwaPySense.Worker.assign_to" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assign the worker to a queue</p>
+<dd><p>Assign the worker to a queue to act on</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_queue</strong> (<em>queue.Queue</em>) – This is a shared memory space between the
+parent Listener instance and this instance. This is the
+primary method of communication between the threads</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – If the argument passed is not of type queue.Queue</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
