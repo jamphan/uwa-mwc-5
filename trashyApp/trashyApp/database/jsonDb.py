@@ -145,15 +145,19 @@ class jsonDb(BaseBinDb):
         if timestamp is None:
             timestamp = datetime.now()
         
-        timestamp_as_str = timestamp.strftime(self._time_format)
+        if timestamp == -1:
+            timestamp_as_str = None
+        else:
+            timestamp_as_str = timestamp.strftime(self._time_format)
 
         # If no entries exist for this bin, make the base structure
         if self.get_data_bin(linked_bin) is None:
             _record_obj = dict()
-            _record_obj[self._key_data_timestamps] = [timestamp_as_str]
+
+            if timestamp_as_str is not None:
+                _record_obj[self._key_data_timestamps] = [timestamp_as_str]
             _record_obj[field] = [value]
             _record_obj[self._key_data_recorded_by] = [sensor_id]
-
             _data_obj = {self._key_data: {linked_bin: _record_obj}}
 
         else:
@@ -163,19 +167,24 @@ class jsonDb(BaseBinDb):
             # We need to make sure that new fields are padded
             n_existing_records = len(_existing_record[self._key_data_timestamps])
 
-            _add = {field: value, self._key_data_recorded_by:sensor_id}
-
-            for f, v in _add.items():
-                if (f not in _existing_record):
-                    _existing_record[f] = add_field_value(None, n_existing_records, v)
-                elif (len(_existing_record[f]) < n_existing_records):
-                    _existing_record[f] = add_field_value(_existing_record[f], n_existing_records, v)
+            if timestamp_as_str is None:
+                if (field not in _existing_record):
+                    _existing_record[field] = [value]
                 else:
-                    _existing_record[f].append(v)
+                    _existing_record[field].append(value)
+            else:
+                _add = {field: value, self._key_data_recorded_by:sensor_id}
+                _existing_record[self._key_data_timestamps].append(timestamp_as_str)
+
+                for f, v in _add.items():
+                    if (f not in _existing_record):
+                        _existing_record[f] = add_field_value(None, n_existing_records, v)
+                    elif (len(_existing_record[f]) < n_existing_records):
+                        _existing_record[f] = add_field_value(_existing_record[f], n_existing_records, v)
+                    else:
+                        _existing_record[f].append(v)
 
             _data_obj = {self._key_data: {linked_bin: _existing_record}}
-
-            _existing_record[self._key_data_timestamps].append(timestamp_as_str)
 
         self._update(_data_obj)
 
