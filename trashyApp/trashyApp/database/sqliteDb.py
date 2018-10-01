@@ -98,6 +98,18 @@ class SQLite3Db(BaseBinDb):
         )
         """)
 
+        self.cursor.execute("""CREATE TABLE SensorRecord
+        (
+            id INTEGER primary key autoincrement
+            ,SensorId INTEGER
+            ,ItemId INTEGER
+            ,Measurement TEXT
+            ,Value REAL
+            ,FOREIGN KEY(SensorId) REFERENCES Sensor(id)
+            ,FOREIGN KEY(ItemId) REFERENCES Item(id)
+        )
+        """)
+
     @committed
     def add_bin(self, bin_id, position=None, capacity=None, fill_threshold=None):
         """ Adds a bin to the database
@@ -237,25 +249,19 @@ class SQLite3Db(BaseBinDb):
     def get_info_sensor(self, sensor_id):
 
         vals = (sensor_id, )
-        results = self.cursor.execute("""SELECT * FROM Sensor WHERE label = ?""", vals)
+        results = self.cursor.execute("""SELECT [S].[label], [S].[type], [I].[Label] FROM Sensor as [S]
+        LEFT JOIN Item as [I] on [S].[ItemId] = [I].[Id]
+        WHERE [S].[label] = ?""", vals)
 
         # Do a quick check that we don't have an empty result set
         all_results = [x for x in results]
         if len(all_results) == 0:
             return None
 
-        # Determine the linked item
-        linked_to_id = all_results[0][3]
-        if linked_to_id is not None:
-            self.cursor.execute("""SELECT label FROM item WHERE id = ?""", (linked_to_id,))
-            linked_to = self.cursor.fetchone()[0]
-        else:
-            linked_to = None
-
         ret = dict(
-            sensor_id=all_results[0][1],
-            type=all_results[0][2],
-            linked_to=linked_to,
+            sensor_id=all_results[0][0],
+            type=all_results[0][1],
+            linked_to=all_results[0][2],
         )
 
         return ret

@@ -22,6 +22,7 @@ def basedb():
         'sensor_2_noLink': ['RPi', None],
         'sensor_3_noProperties': [None, None]
     }
+
     # Start fresh
     if os.path.exists(TEST_PATH):
         os.remove(TEST_PATH)
@@ -96,6 +97,7 @@ def test_sqlDatabase_repeatedAddFails(basedb):
     """
 
     assert basedb.add_bin('perth_bin_1') == False
+    assert basedb.add_bin('perth_bin_2') == False
     assert basedb.add_sensor('sensor_1') == False
     assert basedb.add_sensor('sensor_2_noLink') == False
 
