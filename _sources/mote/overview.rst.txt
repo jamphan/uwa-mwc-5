@@ -22,6 +22,6 @@ In particular, the sensor identifier and whether or not it is a base station or 
    #define SERIAL_PUSH_TO_LISTENER 1
    
    // Specify the sensor id
-   const char *SENSOR_ID = 'Lora1';
+   const char *SENSOR_ID = "Lora1";
 
 Once installed, simply copy the ``.ino`` source into the Arduino IDE and compile.

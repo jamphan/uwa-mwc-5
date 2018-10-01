@@ -13,6 +13,7 @@ You will need to install the ``trashyApp`` package using pip
 .. code-block:: bash
 
    $ cd /path/to/Repo/                      # TLD
+   $ python -m pip install -r ./trashyApp/requirements.txt
    $ python -m pip install -e ./trashyApp/
 
 .. note::

@@ -176,9 +176,10 @@ with the MQTT protocol.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Listener</span></code> connects to a mote through serial.</p>
 <div class="section" id="quickstart">
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
-<p>To install, you need to navigate to the package directory. The package directory
-is such that when you list-directory with <code class="docutils literal notranslate"><span class="pre">ls</span></code> you can see a <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python -m pip install -e .
+<p>Navigate to the TLD. You will need to install the <code class="docutils literal notranslate"><span class="pre">uwaPySense</span></code> package using pip</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> /path/to/Repo/                      <span class="c1"># TLD</span>
+$ python -m pip install -r ./uwaPySense/requirements.txt
+$ python -m pip install -e ./uwaPySense/
 </pre></div>
 </div>
 <p>Because the package is currently under a proof-of-concept stage, and that it is

@@ -174,13 +174,13 @@ wireless sensor network (WSN).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">.ino</span></code> file requires installation of the <a class="reference external" href="https://github.com/websense/LoraDraginoCode">LoraDraginoCode</a></p>
 <p>Once installed, certain parameters can be tuned in the main <code class="docutils literal notranslate"><span class="pre">.ino</span></code> file.
 In particular, the sensor identifier and whether or not it is a base station or not</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span>// Set to 1 if the mote is connected to a RPi base station
-// in which case it will send a Serial frame to the base station
-// which will be sent to the central server
-#define SERIAL_PUSH_TO_LISTENER 1
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Set to 1 if the mote is connected to a RPi base station</span>
+<span class="c1">// in which case it will send a Serial frame to the base station</span>
+<span class="c1">// which will be sent to the central server</span>
+<span class="cp">#define SERIAL_PUSH_TO_LISTENER 1</span>
 
-// Specify the sensor id
-const char *SENSOR_ID = &#39;Lora1&#39;;
+<span class="c1">// Specify the sensor id</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">SENSOR_ID</span> <span class="o">=</span> <span class="s">&quot;Lora1&quot;</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>Once installed, simply copy the <code class="docutils literal notranslate"><span class="pre">.ino</span></code> source into the Arduino IDE and compile.</p>
