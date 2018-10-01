@@ -131,7 +131,7 @@ class jsonDb(BaseBinDb):
             bin_obj["lat"] = None
             bin_obj["long"] = None
 
-        bin_obj["capacity"] = capacity
+        bin_obj["depth"] = capacity
 
         if fill_threshold is not None:
             bin_obj["threshold"] = fill_threshold

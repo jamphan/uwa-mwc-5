@@ -37,7 +37,6 @@ server_name =
 debug = True
 """
 
-
 @pytest.fixture
 def testconfigraw():
     with open(TEST_PATH, 'w') as fd:
