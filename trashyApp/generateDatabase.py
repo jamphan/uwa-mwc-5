@@ -60,8 +60,8 @@ while current_date < end_date:
 
             newValue = data["data"][bin]["values"][-1] + 16*random.randint(0,100)/100
 
-            if newValue >= 120:
-                newValue = 0
+            if newValue <= 20:
+                newValue = 150
 
             data["data"][bin]["values"].append(newValue)
 

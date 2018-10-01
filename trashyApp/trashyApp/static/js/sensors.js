@@ -62,7 +62,7 @@ function getBinData(){
         dataset = [];
         for(var j = 0; j < data["data"][bin_label]["timestamps"].length; j++){
             var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
-            var rssi = data["data"][bin_label]["RSSI_values"][j];
+            var rssi = -1*data["data"][bin_label]["RSSI_values"][j];
             var start_date = document.getElementById("start-date").value;
             var end_date = document.getElementById("end-date").value;
             if(start_date != "" && end_date != ""){
@@ -168,9 +168,9 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
                             labelString: "RSSI",
                         }, 
                         ticks: {
-                            reverse: false,
-                            min: 50,
-                            max: 120
+                            reverse: true,
+                            min: -120,
+                            max: -50
                         }
                     }
                 ]
