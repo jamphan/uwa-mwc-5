@@ -22,7 +22,8 @@ function processData(){
         const lastValue = binData["values"][dataLength-1];
         const lastUpdated = binData["timestamps"][dataLength-1];
 
-        var percentFilled = (1-(lastvalue-thresh)/(depth))*100;
+        var percentFilled = (1-(lastValue-thresh)/(depth))*100;
+        percentFilled = Math.round(percentFilled)
         var barColor = 'bg-info';
         var status = '<td><img class="bin-alert" width="18px" src = "/static/images/check.png"></td';
         var icon = 'static/images/trash.png';
