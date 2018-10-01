@@ -171,11 +171,13 @@ class jsonDb(BaseBinDb):
             value (float): The value to record
             field (str, default='values'): The key to use to stored values
             timestamp (datetime, default=None): The time to record against. If 
-                None then the database will use the time the method was called'
+                None then the database will use the time the method was called.
+                If timestamp is -1 then no timestamp will be added to the existing
+                data, this allows the system to record multiple data fields against
+                one timestamp
 
         Returns:
-            False: on failure
-            True: on succcess
+            bool: True on success
         """
         
         if not(self.is_sensor(sensor_id)):
@@ -291,7 +293,7 @@ class jsonDb(BaseBinDb):
             sensor_id: The sensor to get information for
         
         Returns:
-            dict: The data against the sensor. The keys are the fields specified
+            dict: The data against the sensor. The keys are the fields specified 
                 during add_data.
         """
 
@@ -379,7 +381,7 @@ class jsonDb(BaseBinDb):
             test_id (str): identifier to check
 
         Returns
-            True: If is valid, false otherwise
+            bool: True on success
         """
         
         if test_id in self.get_all_bins():
