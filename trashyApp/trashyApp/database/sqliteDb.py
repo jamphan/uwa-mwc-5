@@ -72,6 +72,8 @@ class SQLite3Db(BaseBinDb):
 
     @committed
     def _schema_build(self):
+        """ Builds the database schema
+        """
 
         # TODO: Add unique for label
         self.cursor.execute("""CREATE TABLE Item
@@ -102,7 +104,7 @@ class SQLite3Db(BaseBinDb):
 
         Args:
             bin_id (str): the bin identifier (label) to add to the database
-            position (tuple, default=None): 
+            position (tuple, default=None):
 
         Returns:
             bool: True on success, False otherwise
@@ -195,3 +197,94 @@ class SQLite3Db(BaseBinDb):
         results = self.cursor.execute("""SELECT label FROM Item""")
         all_results = [x[0] for x in results]
         return all_results
+
+    @committed
+    def add_sensor(self, sensor_id, sensor_type=None, linked_to=None):
+        """Add a sensor to the database
+
+        Returns:
+            bool: True on success, False otherwise
+        """
+
+        # TODO: Permit a bulk insert using .executemany()
+        #       - Check that len of all parameters are equal
+
+        # Check that the sensor id doesn't already exist
+        self.cursor.execute("""SELECT id FROM Sensor WHERE label = ?""", (sensor_id,))
+        if self.cursor.fetchone() is not None:
+            return False
+
+        if linked_to is not None:
+            # Check if the rqeuested item to link to exists
+            self.cursor.execute("""SELECT id FROM Item WHERE label = ?""", (linked_to,))
+            item = self.cursor.fetchone()
+            if item is None:
+                return False
+            else:
+                item_id = item[0]
+        else:
+            item_id = None
+
+        # Prepare the fill
+        vals = (sensor_id, sensor_type, item_id, )
+
+        self.cursor.execute("""INSERT INTO Sensor (label, type, ItemId)
+        VALUES(?,?,?)""", vals)
+
+        return True
+
+    @committed
+    def get_info_sensor(self, sensor_id):
+
+        vals = (sensor_id, )
+        results = self.cursor.execute("""SELECT * FROM Sensor WHERE label = ?""", vals)
+
+        # Do a quick check that we don't have an empty result set
+        all_results = [x for x in results]
+        if len(all_results) == 0:
+            return None
+
+        # Determine the linked item
+        linked_to_id = all_results[0][3]
+        if linked_to_id is not None:
+            self.cursor.execute("""SELECT label FROM item WHERE id = ?""", (linked_to_id,))
+            linked_to = self.cursor.fetchone()[0]
+        else:
+            linked_to = None
+
+        ret = dict(
+            sensor_id=all_results[0][1],
+            type=all_results[0][2],
+            linked_to=linked_to,
+        )
+
+        return ret
+
+    @committed
+    def is_sensor(self, test_id):
+
+        """ Test whether the request id is a sensor or not
+
+        Args:
+            test_id (str): The item to test
+
+        Returns:
+            bool: True if test_id is a sensor in the database, False otherwise
+        """
+
+        vals = (test_id, )
+        self.cursor.execute("""SELECT id FROM Sensor WHERE label = ?""", vals)
+        if self.cursor.fetchone() is not None:
+            return True
+        else:
+            return False
+
+    @committed
+    def get_all_sensors(self):
+        """ Get all the ids of the sensors registerd in database
+
+        Returns:
+            list: A list of all sensor ids
+        """
+
+        pass# TODO: This method
