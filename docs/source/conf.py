@@ -20,7 +20,7 @@
 import os
 import sys
 REPO_PATH = r'C:\jfs\m1l\git\uwa-mwc-5'
-sys.path.insert(0, os.path.join(REPO_PATH, 'dashboard/'))
+sys.path.insert(0, os.path.join(REPO_PATH, 'trashyApp/'))
 
 
 # -- General configuration ------------------------------------------------

@@ -9,6 +9,9 @@ import argparse
 import uwaPySense.messages
 
 def arg_parser():
+    """ Parses command line options and returns Namespace object
+    pre-allocated with necessary sections
+    """
 
     # Make the namespaces
     ctx = argparse.Namespace()

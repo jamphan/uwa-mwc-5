@@ -4,9 +4,15 @@
 import configparser
 import os
 
+# =============================================================================
+# Configure here
+# =============================================================================
+#
 # Specifies the .ini file to use for configuration.
 # Use None for default configuration
 _CONFIG_FILE = None
+
+# Specify the configuration type to use
 _CONFIG_TYPE_SELECT = ['Base', 'Production']
 _CONFIG_TYPE = _CONFIG_TYPE_SELECT[0]
 
@@ -16,15 +22,40 @@ _CONFIG_TYPE = _CONFIG_TYPE_SELECT[0]
 _DEFAULT_CONFIG_FILE = 'conf.ini'
 _DEFAULT_SERVER_NAME = '127.0.0.1:5000'
 _DEFAULT_DATABASE_PATH = '.'
+_DEFAULT_DATABASE_TYPE = 'json'
+_DEFAULT_DATABASE_FILE = 'trashyApp.json'
+_DEFAULT_MQTT_BROKER_URL = 'm2m.eclipse.org'
+_DEFAULT_MQTT_TOPICS = 'UWA/CITS/DATA;'
 
+# =============================================================================
+# NB: Do not modify below unless you know what you are doing
 def get_config(path):
 
     if path is None:
-        path = _DEFAULT_CONFIG_FILE
 
-    conf = configparser.ConfigParser(allow_no_value=True)
-    conf.optionxform = str
-    conf.read(path)
+        # Try to get the relative instance config file
+        if os.path.exists(_DEFAULT_CONFIG_FILE):
+            path = _DEFAULT_CONFIG_FILE
+            conf = configparser.ConfigParser(allow_no_value=True)
+            conf.optionxform = str
+            conf.read(path)
+
+        # Otherwise manually fill the config
+        else:
+            conf = configparser.ConfigParser()
+            conf['FLASK'] = {'server_name': _DEFAULT_SERVER_NAME,
+                             'debug': False}
+
+            conf['DATABASE'] = {'type': _DEFAULT_DATABASE_TYPE,
+                                'path': _DEFAULT_DATABASE_PATH,
+                                'file': _DEFAULT_DATABASE_FILE}
+
+            conf['MQTT'] = {'broker_url': _DEFAULT_MQTT_BROKER_URL,
+                            'topics_subscribe': _DEFAULT_MQTT_TOPICS}
+    else:
+        conf = configparser.ConfigParser(allow_no_value=True)
+        conf.optionxform = str
+        conf.read(path)
 
     return conf
 

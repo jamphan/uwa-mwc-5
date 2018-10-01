@@ -24,3 +24,4 @@ MWC Wireless Sensor Network's documentation!
    :caption: Server
 
    server-database/overview
+   server-database/api
