@@ -1,6 +1,3 @@
-DATABASE_PATH = 'data.json'
-DATABASE_TYPE = 'json'
-
 # Import the database interfaces
 from .BaseBinDb import BaseBinDb
 from .jsonDb import jsonDb
