@@ -129,7 +129,7 @@ static void txdone_func (osjob_t* job) {
 // log text to USART and toggle LED
 static void tx_func (osjob_t* job) {
   // say hello
-  char msg[10];
+  char msg[10]="F:01,50";
   sprintf(msg, "msg:%d", LMIC.rssi);
   tx(msg, txdone_func);
   // reschedule job every TX_INTERVAL (plus a bit of random to prevent
