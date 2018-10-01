@@ -40,8 +40,11 @@ def add_field_value(target, start_len, value):
 
 class jsonDb(BaseBinDb):
     """ This is a JSON implementation of the BaseBinDB base class.
-
     See app.database.BaseBinDb (in __init__.py) for public API information
+
+    Args:
+        path (str): the path to store/open the database
+        time_format (str): the date-time format to use/parse
     """
 
     def __init__(self, path='database.json', time_format='%Y-%m-%d %H:%M:%S'):
@@ -72,6 +75,8 @@ class jsonDb(BaseBinDb):
             fd.close()
 
     def _base_structure(self):
+        """ Setup the JSON schema
+        """
 
         _base = dict()
         _base[self._key_bins] = dict()
@@ -81,6 +86,15 @@ class jsonDb(BaseBinDb):
         return _base
 
     def _update(self, update_with):
+        """ Update the json data. This is a hacked version of a the .update
+        method for dictionaries. In particular, we cannot replace existing
+        keys (that have dict values) with a new dict; we need to recursively
+        go through the nested dictionaries and update all the keys
+
+        Args:
+            update_with (dict): The dictionary to update the database with
+        """
+
         data = self.data
 
         recursive_dict_update(data, update_with)
@@ -90,6 +104,8 @@ class jsonDb(BaseBinDb):
 
     @property
     def data(self):
+        """ Returns the raw JSON data
+        """
         
         with open(self._path, 'r') as fd:
             data = json.load(fd)
@@ -98,6 +114,12 @@ class jsonDb(BaseBinDb):
 
     def add_bin(self, bin_id, position=None, capacity=None, fill_threshold=None):
         """ Adds a bin to the database
+
+        Args:
+            bin_id (str): The bin identifier
+            position (tuple, default=None): The (lat, lon) coordinates of the bin
+            capacity (float): The maximum capacity of the bin
+            fill_threshold (float): The level before the bin is considered full
         """
         bin_obj = dict()
         
@@ -121,6 +143,14 @@ class jsonDb(BaseBinDb):
         self._update({self._key_bins: {bin_id: bin_obj}})
     
     def add_sensor(self, sensor_id, sensor_type=None, linked_to=None):
+        """ Adds a sensor to the database
+
+        Args:
+            sensor_id (str): The unique sensor identifier
+            sensor_type (str, default=None): A categorisation of sensors
+            linked_to (str): The bin that the sensor is linked to. Must be
+                an existing bin_id, otherwise it will fail over to 'Null'
+        """
         
         sens_obj = dict()
 
@@ -134,13 +164,26 @@ class jsonDb(BaseBinDb):
         self._update({self._key_sensors: {sensor_id: sens_obj}})
 
     def add_data(self, sensor_id, value, field='values', timestamp=None):
+        """ Add data against a sensor_id (and its linked bin)
+
+        Args:
+            sensor_id (str): The sensor to record dat against
+            value (float): The value to record
+            field (str, default='values'): The key to use to stored values
+            timestamp (datetime, default=None): The time to record against. If 
+                None then the database will use the time the method was called'
+
+        Returns:
+            False: on failure
+            True: on succcess
+        """
         
         if not(self.is_sensor(sensor_id)):
-            return None
+            return False
         
         linked_bin = self.get_info_sensor(sensor_id, key=self._key_linked_to)
         if linked_bin is None:
-            return None
+            return False
 
         if timestamp is None:
             timestamp_as_str = datetime.now().strftime(self._time_format)
@@ -193,8 +236,11 @@ class jsonDb(BaseBinDb):
             _data_obj = {self._key_data: {linked_bin: _existing_record}}
 
         self._update(_data_obj)
+        return True
 
     def add_diagnostics(self, sensor_id, value, field='diagnostics', timestamp=None):
+        """ Deprecated
+        """
 
         if not(self.is_sensor(sensor_id)):
             return None
@@ -223,6 +269,15 @@ class jsonDb(BaseBinDb):
             self._update(_data_obj)
 
     def get_data_bin(self, bin_id, starting=None, ending=None):
+        """ Get all data related to a bin
+
+        Args:
+            bin_id: The bin to get information for
+        
+        Returns:
+            dict: The data against the bin. The keys are the fields specified
+                during add_data.
+        """
         
         try:
             return self.data[self._key_data][bin_id]
@@ -230,6 +285,15 @@ class jsonDb(BaseBinDb):
             return None
 
     def get_data_sensor(self, sensor_id, starting=None, ending=None):
+        """ Get all data related to a sensor
+
+        Args:
+            sensor_id: The sensor to get information for
+        
+        Returns:
+            dict: The data against the sensor. The keys are the fields specified
+                during add_data.
+        """
 
         try:
             return self.data[self._key_data][self._key_sensors][sensor_id]
@@ -238,6 +302,15 @@ class jsonDb(BaseBinDb):
 
     def get_info_bin(self, bin_id, key=None):
         """ Returns the bin information for a particular bin
+
+        Args:
+            bin_id (str): the bin to get information for
+            key (str, default=None): Get a specific field, when None then 
+                returns entire dictionary
+
+        Returns:
+            dict: all information is stored in the dict
+            float: if key is not None and key exist in data
         """
 
         if not(self.is_bin(bin_id)):
@@ -252,6 +325,17 @@ class jsonDb(BaseBinDb):
                     return self.data[self._key_bins][bin_id][key]
 
     def get_info_sensor(self, sensor_id, key=None):
+        """ Returns the sensor information for a particular sensor
+
+        Args:
+            sensor_id (str): the sensor to get information for
+            key (str, default=None): Get a specific field, when None then 
+                returns entire dictionary
+
+        Returns:
+            dict: all information is stored in the dict
+            float: if key is not None and key exist in data
+        """
 
         if not(self.is_sensor(sensor_id)):
             return None
@@ -265,6 +349,11 @@ class jsonDb(BaseBinDb):
                     return self.data[self._key_sensors][sensor_id][key]
 
     def get_all_bins(self):
+        """ Get all unique bin ids in database
+
+        Returns:
+            list: of strings of bin ids
+        """
 
         if self.data[self._key_bins] is None:
             return []
@@ -272,13 +361,26 @@ class jsonDb(BaseBinDb):
             return [x for x in self.data[self._key_bins]]
     
     def get_all_sensors(self):
-        
+        """ Get all unique sensor ids in database
+
+        Returns:
+            list: of strings of sensor ids
+        """
+
         if self.data[self._key_sensors] is None:
             return []
         else:
             return [x for x in self.data[self._key_sensors]]
 
     def is_bin(self, test_id):
+        """ Checks if the test_id is a valid bin in the database
+
+        Args:
+            test_id (str): identifier to check
+
+        Returns
+            True: If is valid, false otherwise
+        """
         
         if test_id in self.get_all_bins():
             return True
@@ -286,6 +388,14 @@ class jsonDb(BaseBinDb):
             return False
 
     def is_sensor(self, test_id):
+        """ Checks if the test_id is a valid sensor in the database
+
+        Args:
+            test_id (str): identifier to check
+
+        Returns
+            True: If is valid, false otherwise
+        """
         
         if test_id in self.get_all_sensors():
             return True
