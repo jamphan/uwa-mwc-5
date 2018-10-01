@@ -96,7 +96,7 @@ function getLevelData(){
             const depth = data["bins"][bin_label]["depth"];
             const value = data["data"][bin_label]["values"][j];
             const thresh = data["bins"][bin_label]["threshold"];
-            var percentFilled = (depth-value)/(depth-thresh)*100;
+            var percentFilled = (1-(value-thresh)/(depth))*100;
             var date = moment(data["data"][bin_label]["timestamps"][j], 'YYYY-MM-DD HH:mm').toDate();
             dataset.push({x: date, y: percentFilled});
         }
@@ -168,7 +168,9 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
                             labelString: "RSSI",
                         }, 
                         ticks: {
-                            reverse: true,
+                            reverse: false,
+                            min: 50,
+                            max: 120
                         }
                     }
                 ]
@@ -230,8 +232,7 @@ function refreshLevelGraph(selectList, level_chart, lchart){
                     time: {
                         displayFormats: {
                             quarter: 'MMM D h:mm a'
-                        },
-                        stepSize: 30
+                        }
                     }
                   }
                 ],
@@ -241,9 +242,11 @@ function refreshLevelGraph(selectList, level_chart, lchart){
                             display: true,
                             labelString: "Fill (%)",
                         },
-                        min: 0, 
+                        
                         ticks: {
                             reverse: false,
+                            min: 0, 
+                            max: 100
                         }
                     }
                 ]
