@@ -143,9 +143,8 @@ class jsonDb(BaseBinDb):
             return None
 
         if timestamp is None:
-            timestamp = datetime.now()
-        
-        if timestamp == -1:
+            timestamp_as_str = datetime.now().strftime(self._time_format)
+        elif timestamp == -1:
             timestamp_as_str = None
         else:
             timestamp_as_str = timestamp.strftime(self._time_format)
@@ -154,19 +153,26 @@ class jsonDb(BaseBinDb):
         if self.get_data_bin(linked_bin) is None:
             _record_obj = dict()
 
+            # Permit no-timestamp adds
             if timestamp_as_str is not None:
                 _record_obj[self._key_data_timestamps] = [timestamp_as_str]
+
             _record_obj[field] = [value]
             _record_obj[self._key_data_recorded_by] = [sensor_id]
             _data_obj = {self._key_data: {linked_bin: _record_obj}}
 
         else:
+
+            # Get the existing record
             _existing_record = self.get_data_bin(linked_bin)
 
             # The timestamp key is the only key that is gauranteed to be written
             # We need to make sure that new fields are padded
             n_existing_records = len(_existing_record[self._key_data_timestamps])
 
+            # A 'no-time-add'
+            # Note this will also not update the recorded by entry
+            # either
             if timestamp_as_str is None:
                 if (field not in _existing_record):
                     _existing_record[field] = [value]
