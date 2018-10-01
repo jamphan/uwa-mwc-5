@@ -135,7 +135,7 @@ static void rx_func (osjob_t* job) {
  * F:<SENSOR_ID>,<SENSOR_DATA>,<RSSI>\n
  *
  */
-static void push_to_listener(char *sensor_payload, int rssi)
+static void push_to_listener(unsigned char *sensor_payload, int rssi)
 {
 
   if (SERIAL_PUSH_TO_LISTENER)
