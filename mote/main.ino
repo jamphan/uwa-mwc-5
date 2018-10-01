@@ -24,9 +24,13 @@
        config.h in the lmic library to set it.
 #endif
 
+// Set to 1 if the mote is connected to a RPi base station
+// in which case it will send a Serial frame to the base station
+// which will be sent to the central server
 #define SERIAL_PUSH_TO_LISTENER 1
 
-const char *SENSOR_ID = 'Lora1';
+// Specify the sensor id
+const char *SENSOR_ID = "Lora1";
 
 /* TODO
 4.Edit the "main.cpp" to "Set center frequency" on your Raspberry Pi.
