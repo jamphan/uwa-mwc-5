@@ -20,7 +20,7 @@
 import os
 import sys
 REPO_PATH = r'C:\jfs\m1l\git\uwa-mwc-5'
-sys.path.insert(0, os.path.join(REPO_PATH, 'dashboard/'))
+sys.path.insert(0, os.path.join(REPO_PATH, 'trashyApp/'))
 
 
 # -- General configuration ------------------------------------------------
@@ -50,9 +50,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'MWC Wireless Sensor Network'
+project = 'UWAste'
 copyright = '2018, Group 5'
-author = 'Group 5'
+author = 'UWA CITS4419 Group 5'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

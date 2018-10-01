@@ -30,11 +30,15 @@ class StoppableThread(threading.Thread):
     abruptly be stopped or not. All objects that are derived from this class
     will be stopped when the stop() routine is called by any thread
 
+    Args:
+        rest (float): This numeric should be used in the main run() loop as
+            a specified time for the thread to 'rest' every iteration
+        event (threading.Event): An event, which when set will stop the
+            thread. This parameter is a kwarg as some applications may require 
+            a global stop event, or conversely may want independent threads
+
     Attributes:
         isStopped (bool): Returns TRUE if a stop event was raised
-        _rest (float): This numeric should be used in the main run() loop as
-                       a specified time for the thread to 'rest' every
-                       iteration
     """
 
     def __init__(self, rest=0.001, event=__stop_all_event__):
@@ -61,6 +65,9 @@ class StoppableThread(threading.Thread):
         """ This routine will stop all threads of class StoppableThread
         as all classes that are listening to the threading event ._stop_event
         will be set on stop.
+
+        Raises:
+            SystemError: On fail due to .clean_up() method
         """
 
         self._stop_event.set()
@@ -86,23 +93,23 @@ class StoppableThread(threading.Thread):
 
 class Listener(StoppableThread):
     """ The Listener is only responsible for listening to messages on the serial
-    line and storing them to queue.
+    line and storing them to queue. This ensures that the serial TX buffer never
+    overflows, or there are no issues with the data stream from the less power-
+    -ful device whilst the main thread is busy performing more complex operations
+    (such as pushing information to the network)
 
     Args:
-        serialPort: An open serial port object with read and write methods
-        message_prototype: This is the class prototype for the message structure to use. This
-                           must be of type uwaPySense.messages.Msg
+        serialPort (serial.serial): An open serial port object with read and 
+            write methods
+        message_prototype (uwaPySense.messages.Msg): This is the class prototype
+            for the message structure to use. 
 
     Attributes:
-        _serial (serial.serial): The open serial port the object is instantiated
-                                 with
         _queue (queue.Queue): This is a shared memory space between this object
-                              and the child Worker object. This is the
-                              primary method of communication between the 
-                              threads.
+            and the child Worker object. This is the primary method of 
+            communication between the threads.
         _worker (Worker): The child thread which must handle all the write 
-                          and processing operations
-
+            and processing operations
     """
 
     def __init__(self, serialPort, message_prototype, **kwargs):
@@ -116,6 +123,17 @@ class Listener(StoppableThread):
     def set_worker(self, w):
         """ Set the worker for the listener. This must be set prior to starting
         the Listener thread
+
+        Args:
+            w (uwaPySense.Worker): The worker that will perform the complex
+                operations for the Listener
+
+        Returns:
+            True: On success
+
+        Raises:
+            TypeError: When the arg passes is not of type 
+                uwaPySense.listenerutils.StoppableThread
         """
 
         if not(isinstance(w, StoppableThread)):
@@ -124,10 +142,15 @@ class Listener(StoppableThread):
             self._worker = w
             self._worker.assign_to(self._queue)
 
+        return True
+
     def run(self):
         """ The main loop for the Listener thread. Note this overrides the
         threading.Thread method, and hence will be called upon .start()
         of this thread.
+
+        Raises:
+            SystemError: if there is no Worker assigned to the thread
         """
 
         if self._worker is None:
@@ -153,13 +176,12 @@ class Listener(StoppableThread):
         self._serial.close()
 
 class Worker(StoppableThread):
-    """ The worker must write the messages from queue into the database.
+    """ Responsible for acting on messages recieved by the Listener
 
     Attributes:
-        _queue (queue.Queue): This is a shared memory space between the parent
-                              Listener instance and this instance. This is the
-                              primary method of communication between the 
-                              threads
+        _registrar (list): A list of functions that the worker is to
+            perform on the queue items. If this list blank, the messages
+            are are taken out of queue and ultimately lost.
     """
 
     def __init__(self, **kwargs):
@@ -168,7 +190,15 @@ class Worker(StoppableThread):
         self._registrar = list()
 
     def assign_to(self, q):
-        """ Assign the worker to a queue
+        """ Assign the worker to a queue to act on
+
+        Args:
+            _queue (queue.Queue): This is a shared memory space between the 
+                parent Listener instance and this instance. This is the
+                primary method of communication between the threads
+
+        Raises:
+            TypeError: If the argument passed is not of type queue.Queue
         """
 
         if not(isinstance(q, queue.Queue)):

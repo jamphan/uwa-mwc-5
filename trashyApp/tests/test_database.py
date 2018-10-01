@@ -74,13 +74,13 @@ def test_getBinInfo():
     # Test values are correct
     assert bin_info['lat'] == 10
     assert bin_info['long'] == 20
-    assert bin_info['capacity'] == 100
+    assert bin_info['depth'] == 100
     assert bin_info['threshold'] == 13
 
     # Test values are correct (method 2)
     assert db.get_info_bin('test_bin_99', key='lat') == 10
     assert db.get_info_bin('test_bin_99', key='long') == 20
-    assert db.get_info_bin('test_bin_99', key='capacity') == 100
+    assert db.get_info_bin('test_bin_99', key='depth') == 100
     assert db.get_info_bin('test_bin_99', key='threshold') == 13
 
     clean_up()
@@ -116,7 +116,7 @@ def test_jsonDB_badBinRequest():
     assert db.is_bin('test_bin_99')
     assert db.get_info_bin('test_bin_99', key='lat') is None
     assert db.get_info_bin('test_bin_99', key='long') is None
-    assert db.get_info_bin('test_bin_99', key='capacity') is None
+    assert db.get_info_bin('test_bin_99', key='depth') is None
     assert db.get_info_bin('test_bin_99', key='threshold') is None
 
     assert db.get_info_bin("not_a_bin") is None

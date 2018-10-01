@@ -1,0 +1,27 @@
+.. _mote-overview:
+
+Mote
+====
+
+The mote, as of its proof-of-concept stage, is an Arduino based node in a LoRaWAN
+wireless sensor network (WSN).
+
+Quickstart
+----------
+
+The ``.ino`` file requires installation of the `LoraDraginoCode <https://github.com/websense/LoraDraginoCode>`_ 
+
+Once installed, certain parameters can be tuned in the main ``.ino`` file.
+In particular, the sensor identifier and whether or not it is a base station or not
+
+.. code-block:: c
+
+   // Set to 1 if the mote is connected to a RPi base station
+   // in which case it will send a Serial frame to the base station
+   // which will be sent to the central server
+   #define SERIAL_PUSH_TO_LISTENER 1
+   
+   // Specify the sensor id
+   const char *SENSOR_ID = "Lora1";
+
+Once installed, simply copy the ``.ino`` source into the Arduino IDE and compile.

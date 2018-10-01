@@ -24,6 +24,13 @@
        config.h in the lmic library to set it.
 #endif
 
+// Set to 1 if the mote is connected to a RPi base station
+// in which case it will send a Serial frame to the base station
+// which will be sent to the central server
+#define SERIAL_PUSH_TO_LISTENER 1
+
+// Specify the sensor id
+const char *SENSOR_ID = "Lora1";
 
 /* TODO
 4.Edit the "main.cpp" to "Set center frequency" on your Raspberry Pi.
@@ -118,8 +125,30 @@ static void rx_func (osjob_t* job) {
   Serial.println(LMIC.snr);
   Serial.println();
 
+  push_to_listener(LMIC.frame, LMIC.rssi);
+
   // Restart RX
   rx(rx_func);
+}
+
+/* Pushes the information to the Listener (RPi) in the correct format
+ * F:<SENSOR_ID>,<SENSOR_DATA>,<RSSI>\n
+ *
+ */
+static void push_to_listener(char *sensor_payload, int rssi)
+{
+
+  if (SERIAL_PUSH_TO_LISTENER)
+  {
+    Serial.print("F:");           // Serial frame header
+    Serial.print(SENSOR_ID);
+    Serial.print(",");
+    Serial.print(sensor_payload); // Sensor data
+    Serial.print(",");
+    Serial.print(rssi);
+    Serial.println("");           // Serial frame terminator
+  }
+
 }
 
 static void txdone_func (osjob_t* job) {
@@ -129,7 +158,7 @@ static void txdone_func (osjob_t* job) {
 // log text to USART and toggle LED
 static void tx_func (osjob_t* job) {
   // say hello
-  char msg[10];
+  char msg[10]="F:01,50";
   sprintf(msg, "msg:%d", LMIC.rssi);
   tx(msg, txdone_func);
   // reschedule job every TX_INTERVAL (plus a bit of random to prevent
