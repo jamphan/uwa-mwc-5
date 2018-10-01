@@ -29,6 +29,9 @@ class SQLite3Db(BaseBinDb):
     def cursor(self):
         return self._conn.cursor()
 
+    def close(self):
+        self._conn.close()
+
     def committed(func):
 
         def wrapper_committed(self, *args, **kwargs):
