@@ -12,6 +12,11 @@ import os
 # Use None for default configuration
 _CONFIG_FILE = None
 
+# Uncomment to use your own config file
+# _CONFIG_FILE_DIR = None
+# _CONFIG_FILE_NAME = None
+# _CONFIG_FILE = os.path.join(_CONFIG_FILE_DIR, _CONFIG_FILE_NAME)
+
 # Specify the configuration type to use
 _CONFIG_TYPE_SELECT = ['Base', 'Production']
 _CONFIG_TYPE = _CONFIG_TYPE_SELECT[0]

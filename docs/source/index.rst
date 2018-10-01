@@ -25,3 +25,9 @@ MWC Wireless Sensor Network's documentation!
 
    server-database/overview
    server-database/api
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Web-application
+
+   web-application/overview
