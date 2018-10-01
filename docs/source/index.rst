@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-MWC Wireless Sensor Network's documentation!
-============================================
+UWAste documentation
+====================
 
 .. toctree::
    :maxdepth: 2
@@ -31,3 +31,9 @@ MWC Wireless Sensor Network's documentation!
    :caption: Web-application
 
    web-application/overview
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Mote
+
+   mote/overview
