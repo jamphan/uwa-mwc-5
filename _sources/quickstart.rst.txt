@@ -1,7 +1,8 @@
 Quickstart
 ==========
 
-This repository is a multi-package repository. 
+The UWAste solution is a SmartBin WSN solution over many
+different systems. Thus, this repository is a multi-package repository. 
 You will need to navigate to the individual components, depending on what system
 you wish to develop.
 
@@ -19,4 +20,6 @@ you wish to develop.
 | :ref:`server-database-overview` | Stores all data from the WSN, allowing for data visualiation               |
 +---------------------------------+----------------------------------------------------------------------------+
 | :ref:`web-application-overview` | The python Flask/MQTT application that displays the dashboard              |
++---------------------------------+----------------------------------------------------------------------------+
+| :ref:`mote-overview`            | The mote sensing devices deployed in the WSN                               |
 +---------------------------------+----------------------------------------------------------------------------+
