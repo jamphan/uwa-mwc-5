@@ -1,5 +1,6 @@
 import pytest
 import os
+from datetime import datetime
 
 from trashyApp.database.sqliteDb import SQLite3Db
 
@@ -23,6 +24,11 @@ def basedb():
         'sensor_3_noProperties': [None, None]
     }
 
+    _test_data_data = [ # Sensor_ID, Field, value, timestamp
+        ['sensor_1', 'bin_fill_level', 10, datetime(2018, 10, 2, 2, 30)],
+        ['sensor_1', 'bin_fill_level', 20, datetime(2018, 10, 2, 2, 30)]
+    ]
+
     # Start fresh
     if os.path.exists(TEST_PATH):
         os.remove(TEST_PATH)
@@ -43,6 +49,9 @@ def basedb():
         sens_type = sensor_data[0]
         sens_link = sensor_data[1]
         db.add_sensor(sensor_id, sensor_type=sens_type, linked_to=sens_link)
+
+    for d in _test_data_data:
+        db.add_data(d[0], d[2], field=d[1], timestamp=d[3]) 
 
     yield db
 
@@ -101,8 +110,12 @@ def test_sqlDatabase_repeatedAddFails(basedb):
     assert basedb.add_sensor('sensor_1') == False
     assert basedb.add_sensor('sensor_2_noLink') == False
 
-def test_sqlDatabase_getAllBinsMethod(basedb):
+def test_sqlDatabase_getAllMethod(basedb):
+    """ Check the list from get_all_* methods work correct.
+    This test will most likely fail when we add new data!
+    """
 
+    # bins
     expected = ['perth_bin_1', 'perth_bin_2']
     actual = basedb.get_all_bins()
     assert len(expected) == len(actual)
@@ -112,3 +125,22 @@ def test_sqlDatabase_getAllBinsMethod(basedb):
 
     for bin_id in expected:
         assert bin_id in actual
+
+    # sensors
+    expected = ['sensor_1', 'sensor_2_noLink', 'sensor_3_noProperties']
+    actual = basedb.get_all_sensors()
+    assert len(expected) == len(actual)
+
+    for sensor_id in actual:
+        assert sensor_id in expected
+
+    for sensor_id in expected:
+        assert sensor_id in actual
+
+def test_sqlDatabase_getData(basedb):
+
+    actual = basedb.get_data_item('perth_bin_1')
+    assert actual['value'] == [10, 20]
+    assert actual['timestamp'] == ['2018-10-02 02:30:00', '2018-10-02 02:30:00']
+    assert actual['recorded_by'] == ['sensor_1', 'sensor_1']
+    assert actual['measurement'] == ['bin_fill_level', 'bin_fill_level']

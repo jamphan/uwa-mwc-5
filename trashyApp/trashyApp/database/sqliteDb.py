@@ -2,6 +2,8 @@ from __future__ import with_statement
 
 import sqlite3
 import os
+import collections
+from datetime import datetime
 from contextlib import closing
 
 from . import BaseBinDb
@@ -19,9 +21,10 @@ class SQLite3Db(BaseBinDb):
         conn (sqlite3.connection): The open sqlite connection
     """
 
-    def __init__(self, path='./database.db', build=False):
+    def __init__(self, path='./database.db', build=False, time_format='%Y-%m-%d %H:%M:%S'):
 
         self._path = path
+        self._time_format = time_format
 
         # If the user requests to build, we will clear any existing
         # db files and make a new file
@@ -98,15 +101,16 @@ class SQLite3Db(BaseBinDb):
         )
         """)
 
-        self.cursor.execute("""CREATE TABLE SensorRecord
+        self.cursor.execute("""CREATE TABLE ItemData
         (
             id INTEGER primary key autoincrement
-            ,SensorId INTEGER
+            ,RecordBySensorId INTEGER
             ,ItemId INTEGER
-            ,Measurement TEXT
-            ,Value REAL
-            ,FOREIGN KEY(SensorId) REFERENCES Sensor(id)
-            ,FOREIGN KEY(ItemId) REFERENCES Item(id)
+            ,timestamp DATETIME
+            ,measurement TEXT
+            ,value REAL
+            ,FOREIGN KEY(RecordBySensorId) REFERENCES Sensor(id)
+            ,FOREIGN KEY(ItemId) REFERENCES Item(Id)
         )
         """)
 
@@ -293,4 +297,65 @@ class SQLite3Db(BaseBinDb):
             list: A list of all sensor ids
         """
 
-        pass# TODO: This method
+        results = self.cursor.execute("""SELECT label FROM Sensor""")
+        all_results = [x[0] for x in results]
+        return all_results
+
+    @committed
+    def add_data(self, sensor_id, value, field='values', timestamp=None):
+        """
+        
+        Returns:
+            bool: True if successful, False otherwise
+        """
+
+        # TODO: Permit executemany
+
+        # check that sensor is valid
+        # TODO: Do we really need this? the WHERE condition in the INSERT 
+        #       statement should filter any invalid sensor ids out. Only
+        #       really useful for returns
+        self.cursor.execute("""SELECT id FROM Sensor WHERE label = ?""", (sensor_id,))
+        sensor_id = self.cursor.fetchone()
+        if sensor_id is None:
+            return False
+        else:
+            sensor_id = sensor_id[0]
+
+        if timestamp is None:
+            timestamp = datetime.now()
+        elif not(isinstance(timestamp, datetime)):
+            return False
+
+        vals = (sensor_id, timestamp, field, value, sensor_id,)
+        self.cursor.execute("""INSERT INTO ItemData (RecordBySensorId, ItemId, timestamp, measurement, value)
+        select ?,[itm].[id],?,?,?
+        from Sensor as [sen]
+        left join Item as [itm] on [itm].[Id] = [sen].[ItemId]
+        where 
+            [sen].[id] = ?
+        """, vals)
+
+        return True
+
+    @committed
+    def get_data_item(self, itemId, measurement='%'):
+
+        vals = (itemId, measurement, )
+        ret = collections.defaultdict(list)
+        for row in self.cursor.execute("""
+            SELECT [ID].* FROM ItemData as [ID]
+            INNER JOIN Item as [It] on [It].[Id] = [Id].[ItemId]
+            INNER JOIN 
+            WHERE [It].[label] = ? AND [ID].[measurement] LIKE ?
+        """, vals):
+            ret['timestamp'].append(row[3])
+            ret['measurement'].append(row[4])
+            ret['value'].append(row[5])
+            ret['recorded_by'].append(row[1])
+
+        return ret
+
+
+
+
