@@ -344,15 +344,16 @@ class SQLite3Db(BaseBinDb):
         vals = (itemId, measurement, )
         ret = collections.defaultdict(list)
         for row in self.cursor.execute("""
-            SELECT [ID].* FROM ItemData as [ID]
-            INNER JOIN Item as [It] on [It].[Id] = [Id].[ItemId]
-            INNER JOIN 
-            WHERE [It].[label] = ? AND [ID].[measurement] LIKE ?
+            SELECT [Data].[Timestamp], [Data].[measurement], [Data].[Value], [Sn].[label]
+            FROM ItemData as [Data]
+            INNER JOIN Item as [It] on [It].[Id] = [Data].[ItemId]
+            INNER JOIN Sensor as [Sn] on [Sn].[Id] = [Data].[RecordBySensorId]
+            WHERE [It].[label] = ? AND [Data].[measurement] LIKE ?
         """, vals):
-            ret['timestamp'].append(row[3])
-            ret['measurement'].append(row[4])
-            ret['value'].append(row[5])
-            ret['recorded_by'].append(row[1])
+            ret['timestamp'].append(row[0])
+            ret['measurement'].append(row[1])
+            ret['value'].append(row[2])
+            ret['recorded_by'].append(row[3])
 
         return ret
 
