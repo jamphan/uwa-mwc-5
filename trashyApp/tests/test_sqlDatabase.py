@@ -26,7 +26,8 @@ def basedb():
 
     _test_data_data = [ # Sensor_ID, Field, value, timestamp
         ['sensor_1', 'bin_fill_level', 10, datetime(2018, 10, 2, 2, 30)],
-        ['sensor_1', 'bin_fill_level', 20, datetime(2018, 10, 2, 2, 30)]
+        ['sensor_1', 'bin_fill_level', 20, datetime(2018, 10, 2, 3, 00)],
+        ['sensor_1', 'rssi', -80, datetime(2018, 10, 2, 3, 00)],
     ]
 
     # Start fresh
@@ -140,7 +141,17 @@ def test_sqlDatabase_getAllMethod(basedb):
 def test_sqlDatabase_getData(basedb):
 
     actual = basedb.get_data_item('perth_bin_1')
-    assert actual['value'] == [10, 20]
-    assert actual['timestamp'] == ['2018-10-02 02:30:00', '2018-10-02 02:30:00']
-    assert actual['recorded_by'] == ['sensor_1', 'sensor_1']
-    assert actual['measurement'] == ['bin_fill_level', 'bin_fill_level']
+    assert actual['value'] == [10, 20, -80]
+    assert actual['timestamp'] == ['2018-10-02 02:30:00', '2018-10-02 03:00:00', '2018-10-02 03:00:00']
+    assert actual['recorded_by'] == ['sensor_1', 'sensor_1', 'sensor_1']
+    assert actual['measurement'] == ['bin_fill_level', 'bin_fill_level', 'rssi']
+
+    # Test getting a single measurement type
+    actual = basedb.get_data_item('perth_bin_1', measurement='rssi')
+    assert actual['value'] == [-80]
+    assert actual['timestamp'] == ['2018-10-02 03:00:00']
+    assert actual['measurement'] == ['rssi']
+
+    # Test getting no results
+    actual = basedb.get_data_item('not_a_bin')
+    assert len(actual['value']) == 0

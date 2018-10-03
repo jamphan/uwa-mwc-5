@@ -303,7 +303,17 @@ class SQLite3Db(BaseBinDb):
 
     @committed
     def add_data(self, sensor_id, value, field='values', timestamp=None):
-        """
+        """ Adds data recorded by a sensor to the database
+
+        Args:
+            sensor_id (str): The sensor label used
+            value (float): The value to record
+            field (str, optional): The measurement column to record it as. Note 
+                that the database does not maintain referential integrity over
+                this column, and it is up to the caller to ensure consistent
+                usage of this column. Defaults to 'values'
+            timestamp (datetime, optional): Time to record against. Defaults to
+                time of call
         
         Returns:
             bool: True if successful, False otherwise
@@ -339,9 +349,20 @@ class SQLite3Db(BaseBinDb):
         return True
 
     @committed
-    def get_data_item(self, itemId, measurement='%'):
+    def get_data_item(self, item_label, measurement='%'):
+        """ Get data recorded against an id
 
-        vals = (itemId, measurement, )
+        Args:
+            item_label (str): The item to fetch data for
+            measurement (string, optional): A particular measurement to get.
+                see add_data. Defaults to all measurement types with glob '%'
+
+        Returns:
+            dict: Dictionary with keys 'timestamp', 'measurement', 'value', and 
+                'recorded_by'. Each of these keys are list-valued.
+        """
+
+        vals = (item_label, measurement, )
         ret = collections.defaultdict(list)
         for row in self.cursor.execute("""
             SELECT [Data].[Timestamp], [Data].[measurement], [Data].[Value], [Sn].[label]
