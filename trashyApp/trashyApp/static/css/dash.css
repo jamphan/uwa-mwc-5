@@ -174,3 +174,6 @@ button:focus {
 #uwa-icon{
     height: 80px;
 }
+.form-control{
+    margin-bottom: 5px;
+}

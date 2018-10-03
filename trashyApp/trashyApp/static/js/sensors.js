@@ -168,7 +168,7 @@ function refreshRSSIGraph(selectList, rssi_chart, rchart){
                             labelString: "RSSI",
                         }, 
                         ticks: {
-                            reverse: true,
+                            reverse: false,
                             min: -120,
                             max: -50
                         }

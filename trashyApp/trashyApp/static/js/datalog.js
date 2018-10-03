@@ -1,11 +1,13 @@
 $(document).ready(function () {
 
-    var table = $('#myTable').DataTable();
+    var table = $('#myTable').DataTable({
+        "bProcessing": true,
+    });
     
     num_bins = bin_ids.length;
     for(var i = 0; i < num_bins; i++){
         num_records = data[bin_ids[i]]["timestamps"].length;
-        for(var j = 0; j < num_records; j++){
+        for(var j = 0; j < 1; j++){
             var binID = bin_ids[i];
             var bin = data[binID];
             var time = bin["timestamps"][j];

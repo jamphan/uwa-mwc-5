@@ -58,10 +58,10 @@ while current_date < end_date:
             newRSSI = (data["data"][bin]["RSSI_values"][-1]*10 + random.randint(80,120))/11
             data["data"][bin]["RSSI_values"].append(newRSSI)
 
-            newValue = data["data"][bin]["values"][-1] + 16*random.randint(0,100)/100
+            newValue = data["data"][bin]["values"][-1] - 16*random.randint(0,100)/100
 
             if newValue <= 20:
-                newValue = 150
+                newValue = 140
 
             data["data"][bin]["values"].append(newValue)
 
